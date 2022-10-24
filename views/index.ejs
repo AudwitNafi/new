@@ -1,0 +1,77 @@
+<%- include("header") -%>
+
+    <div class="container-fluid">
+      <!-- Title -->
+
+      <div class="row">
+        <div class="col-lg-6 col-md">
+          <h1>Practicing problem solving made easy!</h1>
+          <button type="button" class="btn btn-outline-light btn-lg dw-btn"><i class="fa-sharp fa-solid fa-code"></i> <a href="/register" style="text-decoration: none;">Start learning</a></button>
+          <!-- <button type="button" class="btn btn-dark btn-lg dw-btn"><i class="fa-solid fa-mobile-screen"></i> </button> -->
+        </div>
+      </div>
+      <div class="Login">
+          <div class="background">
+            <!-- <div class="shape"></div>
+            <div class="shape"></div> -->
+        </div>
+        <form class="Login-form" action="/auth" method="POST">
+            <h3>Login Here</h3>
+
+            <label for="username">Username</label>
+            <input type="text" placeholder="Username" id="username" name="name">
+
+            <label class="Login-label" for="password">Password</label>
+            <input type="password" placeholder="Password" id="password" name="password">
+
+            <button type="submit" class="Login-button">Log In</button>
+            <!-- <div class="social">
+                <div class="go"><i class="fab fa-google"></i>  Google</div>
+                <div class="fb"><i class="fab fa-facebook"></i>  Facebook</div>
+            </div> -->
+        </form>
+        </div>
+    </div>
+
+  </section>
+
+
+  <!-- Features -->
+
+  <section id="features">
+    
+    <div class="row">
+      <div class="feature-box col-lg-4">
+        <h3>Easy to use.</h3>
+        <p>Problems from popular online judges sorted in one place</p>
+        <i class="icon fa-solid fa-circle-nodes fa-4x"></i>
+      </div>
+      <div class="feature-box col-lg-4">
+        <h3>Sorted by Category</h3>
+        <p>Solve selective problems that you're weak on</p>
+        <i class="icon fa-sharp fa-solid fa-list-check fa-4x"></i>
+      </div>
+      <div class="feature-box col-lg-4">
+        <h3>Guaranteed to work.</h3>
+        <p>You'll become a better problem-solver within weeks</p>
+        <i class="icon fa-solid fa-wand-sparkles fa-4x"></i>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Press -->
+
+  <hr>
+  <section id="sites">
+    <h3 id="sites-h3">Find Problems from all the popular online judges</h3>
+
+    <div class="flex-container">
+      <img class="press-logo" src="Pics/ac.jpg" alt="tc-logo">
+      <img class="press-logo" src="Pics/cf.jpg" alt="tnw-logo">
+      <img class="press-logo" src="Pics/Codechef(new)_logo.svg.png" alt="biz-insider-logo">
+      <img class="press-logo" src="Pics/topcoder.webp" alt="mashable-logo">
+    </div>
+  </section>
+
+<%- include("footer") -%>
