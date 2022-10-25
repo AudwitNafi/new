@@ -135,12 +135,16 @@ p{
 	padding: 3% 2%;
 } */
 
+.prob-section {
+  background-color: #eee;
+}
 
 .problem-table{
 	border-collapse: collapse;
 	font-size: 0.9em;
 	margin: 25px 10px;
 	min-width: 80%;
+  table-layout: fixed;
 }
 
 .problem-table thead tr
@@ -164,11 +168,16 @@ p{
 	border-bottom: 2px solid #8f8f8f;
 }
 
+.problem-table a {
+  text-decoration: none;
+}
+
 .prob-categories{
+  background-color: #628E90;
 	border: 1px solid #000;
 	margin: 80px 50px 80px 80px;
-    border-radius: 10px;
-    width: 380px;
+  border-radius: 10px;
+  width: 380px;
 }
 
 

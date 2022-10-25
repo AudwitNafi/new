@@ -1,0 +1,144 @@
+<%- include("inner-header") -%>
+    <section class="prob-section">
+
+        <div>
+            <div class="row">
+                <div class="col-lg-3 prob-categories" style="height: 420px;">
+                    <div style="background-color: #ddd; margin-top: 10px; border-radius: 5px;">
+                        <h3 style="text-align: center; margin:0;">Categories</h3>
+                    </div>
+                    <form action="" method="post">
+                        <label
+                            style="margin: 30px 0; color: #000; font-family: 'Montserrat', sans-serif; font-size: 1.5rem; color: #fff; display: block; text-align: center;"
+                            for="tagsInput">Select Tag</label>
+                        <!-- <input style="margin: 5% 0; background-color: #ddd; height: auto; width: auto; display: inline-block;" id="tagsInput" type="text" name="tagName"> -->
+                        <div class="search-box" style="margin-top: 50px">
+                            <button class="btn-search"><i class="fas fa-search"></i></button>
+                            <input type="text" onkeyup="sort()" class="input-search" placeholder="Type to Search...">
+                        </div>
+                        <!-- <button style="margin: 10% 40%" class="btn btn-outline-dark btn-lg dw-btn" type="submit">Go</button> -->
+                        <label
+                            style="margin: 30px 0; color: #000; font-family: 'Montserrat', sans-serif; font-size: 1.5rem; color: #fff; display: block; text-align: center;"
+                            for="tagsInput">Select Website</label>
+                        <div class="search-box" style="margin-top: 50px">
+                            <button class="btn-search"><i class="fas fa-search"></i></button>
+                            <input type="text" onkeyup="sortBySite()" class="input-search" id="site"
+                                placeholder="Type to Search...">
+                        </div>
+                    </form>
+
+                </div>
+                <div class="col-lg-7" style="margin-left:10%">
+                    <div>
+                        <h2>Problems</h2>
+                    </div>
+                    <div class="problem-set">
+                        <table class="problem-table">
+                            <thead>
+                                <th>Name</th>
+                                <th>Website</th>
+                                <th>Category</th>
+                                <th>Solved</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href="https://codeforces.com/problemset/problem/4/A">Watermelon</a></td>
+                                    <td>Codeforces</td>
+                                    <td>Brute Force</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://codeforces.com/problemset/problem/282/A">Bit++</a></td>
+                                    <td>Codeforces</td>
+                                    <td>Implementation</td>
+                                </tr>
+                                <tr>
+                                    <td><a
+                                            href="https://www.hackerrank.com/challenges/array-left-rotation/problem?isFullScreen=true">Left-rotation</a>
+                                    </td>
+                                    <td>Hackerrank</td>
+                                    <td>Data Stuctures</td>
+                                </tr>
+                                <tr>
+                                    <td><a
+                                            href="https://www.hackerrank.com/challenges/get-the-value-of-the-node-at-a-specific-position-from-the-tail/problem?isFullScreen=true">Get
+                                            Node Value</a></td>
+                                    <td>Hackerrank</td>
+                                    <td>Data Structures</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://codeforces.com/problemset/problem/1728/E">Red-black Pepper</a>
+                                    </td>
+                                    <td>Codeforces</td>
+                                    <td>Algorithms</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://codeforces.com/problemset/problem/1729/G">Cut Substrings</a>
+                                    </td>
+                                    <td>Codeforces</td>
+                                    <td>Dynamic Programming</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://www.spoj.com/problems/ABCDEF/">ABCDEF</a></td>
+                                    <td>SPOJ</td>
+                                    <td>Binary Search</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://codeforces.com/problemset/problem/1729/F">Kirei and the Linear Function</a></td>
+                                    <td>Codeforces</td>
+                                    <td>Hashing</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://www.spoj.com/problems/ADABLOOM/">Ada and Bloom</a></td>
+                                    <td>SPOJ</td>
+                                    <td>Graphs</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://www.spoj.com/problems/ACRYM2/">Acronym II</a></td>
+                                    <td>SPOJ</td>
+                                    <td>Strings</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://codeforces.com/problemset/problem/1726/D">Graphs</a></td>
+                                    <td>Codeforces</td>
+                                    <td>Graphs</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://codeforces.com/problemset/problem/1726/D">Graphs</a></td>
+                                    <td>Codeforces</td>
+                                    <td>Graphs</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://codeforces.com/problemset/problem/1726/D">Graphs</a></td>
+                                    <td>Codeforces</td>
+                                    <td>Graphs</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://codeforces.com/problemset/problem/1726/D">Graphs</a></td>
+                                    <td>Codeforces</td>
+                                    <td>Graphs</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://codeforces.com/problemset/problem/1726/D">Graphs</a></td>
+                                    <td>Codeforces</td>
+                                    <td>Algorithms</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://www.spoj.com/problems/ADAPEAR/">Ada and Pear</a></td>
+                                    <td>SPOJ</td>
+                                    <td>Data Structures</td>
+                                </tr>
+                                <tr>
+                                    <td><a href="https://codeforces.com/problemset/problem/1726/D">Graphs</a></td>
+                                    <td>Codeforces</td>
+                                    <td>Graphs</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="category.js"></script>
+    <script src="sort.js"></script>
+<%- include("footer") -%>
