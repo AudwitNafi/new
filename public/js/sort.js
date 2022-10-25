@@ -13,7 +13,7 @@ function sortOnLoad()
     var table = document.querySelector(".problem-table");
     var tr = table.getElementsByTagName("tr");
     for (i = 1; i < tr.length; i++){
-        td = tr[i].getElementsByTagName("td")[2];
+        td = tr[i].getElementsByTagName("td")[3];
             if(td.textContent===inputValue){
                 tr[i].style.display = "";
             } 
@@ -31,7 +31,7 @@ function sort() {
         table = document.querySelector(".problem-table");
         tr = table.getElementsByTagName("tr");
         for (i = 1; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[2];
+            td = tr[i].getElementsByTagName("td")[3];
             if (td) {
                 txtValue = td.textContent || td.innerText;
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
@@ -51,7 +51,7 @@ function sort() {
         table = document.querySelector(".problem-table");
         tr = table.getElementsByTagName("tr");
         for (i = 1; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[1];
+            td = tr[i].getElementsByTagName("td")[2];
             if (td) {
                 txtValue = td.textContent || td.innerText;
                 if (txtValue.toUpperCase().indexOf(filter) > -1) {
