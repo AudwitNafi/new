@@ -22,7 +22,7 @@
       
         <!-- Nav Bar -->
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <a id="Knapsack" class="navbar-brand" style="padding: 0 15px;" href="/">Knapsack</a>
+          <a id="Knapsack" class="navbar-brand" style="padding: 0 15px;" href="/home">Knapsack</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
           </button>
@@ -31,27 +31,28 @@
             
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/profile"><%= profileName %></a>
+                    <a class="nav-link" href="/profile"><%= data.profileName %></a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="/problems">Problems</a>
               </li>
-                <!-- <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown" aria-expanded="false">Problems</a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="">Data Structures</a></li>
-                        
-                        <li><a class="dropdown-item" href="">Algorithms</a></li>
-                        
-                        <li><a class="dropdown-item" href="">More Categories</a></li>
-                        
-                    </ul>
-                </li> -->
                 <li class="nav-item">
                     <a class="nav-link" href="">Track Your Progress</a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link" href="/logout">Logout</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">More</a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="">About Us</a></li>
+      
+                    <li><a class="dropdown-item" href="">FAQ</a></li>
+      
+                    <li><a class="dropdown-item" href="">Contact</a></li>
+      
+                  </ul>
                 </li>
             </ul>
           </div>

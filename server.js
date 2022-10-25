@@ -32,7 +32,7 @@ app.use(express.static(path.join(__dirname, './public/js')));
 app.set('view engine', 'ejs')
 
 app.get('/home', (req, res)=>{
-	if(req.session.loggedin) res.render('home', {profileName: req.session.name});
+	if(req.session.loggedin) res.render('home', {data:{profileName: req.session.name}});
 	else res.render('login')
 })
 
@@ -66,6 +66,7 @@ app.post('/auth', function(request, response) {
 				request.session.loggedin = true;
 				request.session.name = name;
 				request.session.email = results[0].email;
+				request.session.id = results[0].ID;
 				// Redirect to home page
 				// response.redirect('/profile/'+results[0].ID);
 				response.redirect('/home')
@@ -112,11 +113,15 @@ app.post('/reg', async (req, res)=>{
 })
 
 app.get('/problems', (req, res)=>{
-	res.render('problems', {profileName: req.session.name})
+	res.render('problems', {data:{profileName: req.session.name}})
 })
 
 app.put('/rank', (req, res)=>{
     res.render()
+})
+
+app.get('/profile', (req, res)=>{
+	res.redirect('/profile/'+req.session.id)
 })
 
 app.get('/profile/:id', function(request, response) {
