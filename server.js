@@ -85,7 +85,7 @@ app.post('/auth', function(request, response) {
 
 app.post('/reg', async (req, res)=>{
 	console.log(req.body);
-	const {name, email, password, passwordConfirm} = req.body;
+	const {name, bio, email, password, passwordConfirm} = req.body;
 	if (name && email && password && passwordConfirm) {
 		connection.query('SELECT email from users WHERE email = ?', [email], async (err, results) => {
 				if (err) {
@@ -100,9 +100,12 @@ app.post('/reg', async (req, res)=>{
 				}
 			}
 		)
-	} 
+	}
+	else{
+		res.send('Enter all details')
+	}
 
-	connection.query('INSERT INTO users SET ?', { name: name, email: email, password: password }, (err, results) => {
+	connection.query('INSERT INTO users SET ?', { name: name, bio:bio, email: email, password: password }, (err, results) => {
 		if (err) {
 			console.log(err);
 		} else {
@@ -114,6 +117,39 @@ app.post('/reg', async (req, res)=>{
 
 app.get('/problems', (req, res)=>{
 	res.render('problems', {data:{profileName: req.session.name}})
+})
+
+app.get('/add', (req, res)=>{
+	res.render('add', {data:{profileName: req.session.name}})
+})
+
+app.post('/add', (req, res)=>{
+	const {name, link, website, category} = req.body;
+	if (name && link && website && category) {
+		connection.query('SELECT name from problems WHERE name = ?', [name], async (err, results) => {
+				if (err) {
+					console.log(err);
+				} 
+				else {
+					if (results.length > 0) {
+						res.send('Problem is already on the website!')
+					}
+				}
+			}
+		)
+	}
+	else{
+		res.send('Enter all problem details')
+	}
+
+	connection.query('INSERT INTO problems SET ?', { name: name, link: link, website: website, category: category }, (err, results) => {
+		if (err) {
+			console.log(err);
+		} else {
+			res.send('Problem Added');
+			res.end();
+		}
+	})
 })
 
 app.put('/rank', (req, res)=>{
@@ -128,7 +164,7 @@ app.get('/profile/:id', function(request, response) {
 	const { id } = request.params
 	// console.log(request.session.name);
 	// console.log(request.session.email);
-	let name, email
+	let name, email, bio
 	connection.query('SELECT * FROM users WHERE id = ?', [id], async(err, results)=>{
 			if (err) {
 				console.log(err);
@@ -139,11 +175,12 @@ app.get('/profile/:id', function(request, response) {
 				}
 				name = request.session.name
 				email = request.session.email
+				bio = request.session.bio
 				if (request.session.loggedin) {
 					// Output username
 					// console.log('name', name);
 					// console.log('email', email);
-					response.render('profile', { data: { name: name, email: email, profileName: name } });
+					response.render('profile', {data: { name: name, email: email, profileName: name, bio: bio }} );
 				} else {
 					// Not logged in
 					response.redirect('/login');
