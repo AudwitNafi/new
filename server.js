@@ -66,6 +66,7 @@ app.post('/auth', function(request, response) {
 				request.session.loggedin = true;
 				request.session.name = name;
 				request.session.email = results[0].email;
+				request.session.bio = results[0].bio;
 				request.session.id = results[0].ID;
 				// Redirect to home page
 				// response.redirect('/profile/'+results[0].ID);
@@ -205,6 +206,7 @@ app.get('/profile/:id', function(request, response) {
 					// Output username
 					// console.log('name', name);
 					// console.log('email', email);
+					console.log('bio', bio);
 					response.render('profile', {data: { name: name, email: email, profileName: name, bio: bio }} );
 				} else {
 					// Not logged in
