@@ -115,9 +115,34 @@ app.post('/reg', async (req, res)=>{
 	})
 })
 
-app.get('/problems', (req, res)=>{
-	res.render('problems', {data:{profileName: req.session.name}})
-})
+// app.get('/problems', (req, res)=>{
+// 	connection.query("SELECT * FROM problems", (err, results)=>{
+// 		if(err) throw err
+// 		else{
+// 			res.render('problems', {data:{profileName: req.session.name, action: 'list', problems: results}})
+// 		}
+// 	})
+	
+// })
+
+app.get("/problems", function(request, response, next){
+
+	var query = "SELECT * FROM problems";
+
+	connection.query(query, function(error, data){
+
+		if(error)
+		{
+			throw error; 
+		}
+		else
+		{
+			response.render('sample_data', {title:'Problems', action:'list', sampleData:data});
+		}
+
+	});
+
+});
 
 app.get('/add', (req, res)=>{
 	res.render('add', {data:{profileName: req.session.name}})

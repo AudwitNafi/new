@@ -1,0 +1,45 @@
+<%- include("inner-header") -%>
+<style>
+    h3{
+        font-family: 'Montserrat';
+        color: black;
+        margin: 10px;
+    }
+    .btn-dark{
+        display:flex;
+        justify-content: center;
+        margin-top: 20px;
+        margin-bottom: 50px;
+    }
+
+    input{
+        width: 50px;
+    }
+    form{
+        margin: 5%;
+    }
+</style>
+
+
+<div class="container-sm">
+
+    <form action="/add" method="POST">
+        <h3>Enter problem details</h3>
+        <div class="mb-3">
+          <input class="form-control" id="exampleInputEmail1" name="name" placeholder="Name">
+        </div>
+        <div class="mb-3">
+            <input class="form-control" id="exampleInputEmail1" name="link" placeholder="Link">
+          </div>
+        <div class="mb-3">
+          <input class="form-control" id="exampleInputPassword1" name="website" placeholder="Website">
+        </div>
+        <div class="mb-3">
+            <input class="form-control" id="exampleInputPassword1" name="category" placeholder="Category">
+        </div>
+          <button type="submit" class="btn btn-dark mx-auto">Add</button>
+    </form>
+    
+</div>
+
+<%- include("footer") -%>

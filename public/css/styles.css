@@ -172,15 +172,23 @@ p{
   text-decoration: none;
 }
 
+
 .prob-categories{
   background-color: #628E90;
 	border: 1px solid #000;
-	margin: 80px 50px 80px 80px;
+	/* margin: 0 80px; */
+  margin-right : 150px;
   border-radius: 10px;
   width: 380px;
 }
 
+.container-sm {
+  margin : 100px 250px;
+}
 
+.container-sm a{
+  text-decoration: none;
+}
 /* login-CSS */
 .Login{
 	position: absolute;
