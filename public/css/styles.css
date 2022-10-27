@@ -143,8 +143,12 @@ p{
 	border-collapse: collapse;
 	font-size: 0.9em;
 	margin: 25px 10px;
-	min-width: 80%;
-  table-layout: fixed;
+	/* min-width: 80%; */
+  /* table-layout: fixed; */
+}
+
+.table-responsive {
+  overflow : hidden;
 }
 
 .problem-table thead tr

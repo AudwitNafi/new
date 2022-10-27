@@ -221,7 +221,10 @@ app.get('/profile/:id', function(request, response) {
 	
 );
 
-
+app.put('/problems')
+{
+	
+}
 
 // app.delete('/logout', (req, res) => {
 // 	req.logOut()
