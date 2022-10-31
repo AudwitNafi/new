@@ -1,0 +1,31 @@
+<%- include("inner-header") -%>
+
+<div class="container">
+    <canvas style="margin: auto" id="myChart" style="width:100%;max-width:600px"></canvas>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script>
+    var xValues = ["Algorithms", "Data Structures", "Brute Force", "Mathematics", "Graphs", "Hashing", "Dynamic Programming", "Strings", "Binary Search", "Probabilities"];
+    var yValues = [5, 2, 3, 6, 2, 3, 4, 1, 6, 2];
+    var barColors = ["red", "green","blue","orange","brown","yellow","aqua","purple","magenta", "teal"];
+    
+    new Chart("myChart", {
+      type: "bar",
+      data: {
+        labels: xValues,
+        datasets: [{
+          backgroundColor: barColors,
+          data: yValues
+        }]
+      },
+      options: {
+        legend: {display: false},
+        title: {
+          display: true,
+          text: "Your Problem Solving Progress"
+        }
+      }
+    });
+    </script>
+
+<%- include("footer") -%>

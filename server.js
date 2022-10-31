@@ -2,7 +2,7 @@ const mysql = require('mysql');
 const express = require('express');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
-
+const bcrypt = require('bcryptjs')
 const path = require('path');
 
 const app = express()
@@ -50,17 +50,17 @@ app.get('/register', (req, res)=>{
 })
 
 
-app.post('/auth', function(request, response) {
+app.post('/auth', async function(request, response) {
 	// Capture the input fields
 	const {name, password} = request.body
 	// Ensure the input fields exists and are not empty
 	if (name && password) {
 		// Execute SQL query that'll select the account from the database based on the specified username and password
-		connection.query('SELECT * FROM users WHERE name = ? AND password = ?', [name, password], function(error, results, fields) {
+		connection.query('SELECT * FROM users WHERE name = ?', [name], async function(error, results, fields) {
 			// If there is an issue with the query, output the error
 			if (error) throw error;
 			// If the account exists
-			if (results.length > 0) {
+			if (results.length > 0 && await bcrypt.compare(password, results[0].password)) {
 				
 				// Authenticate the user
 				request.session.loggedin = true;
@@ -95,8 +95,23 @@ app.post('/reg', async (req, res)=>{
 				else {
 					if (results.length > 0) {
 						res.send('Email already registered!')
+						res.end();
 					} else if (password != passwordConfirm) {
 						res.send('Passwords do not match!')
+						res.end();
+					}
+					else {
+						let hashedPassword = await bcrypt.hash(password, 8);
+							console.log(hashedPassword);
+
+						connection.query('INSERT INTO users SET ?', { name: name, bio:bio, email: email, password: hashedPassword }, (err, results) => {
+							if (err) {
+								console.log(err);
+							} else {
+								res.send('User registered');
+								res.end();
+							}
+						})
 					}
 				}
 			}
@@ -105,15 +120,6 @@ app.post('/reg', async (req, res)=>{
 	else{
 		res.send('Enter all details')
 	}
-
-	connection.query('INSERT INTO users SET ?', { name: name, bio:bio, email: email, password: password }, (err, results) => {
-		if (err) {
-			console.log(err);
-		} else {
-			res.send('User registered');
-			res.end();
-		}
-	})
 })
 
 // app.get('/problems', (req, res)=>{
@@ -178,6 +184,10 @@ app.post('/add', (req, res)=>{
 	})
 })
 
+app.get('/progress', (req, res)=>{
+	res.render('progress', {data:{profileName: req.session.name}})
+})
+
 app.put('/rank', (req, res)=>{
     res.render()
 })
@@ -221,10 +231,10 @@ app.get('/profile/:id', function(request, response) {
 	
 );
 
-app.put('/problems')
-{
+// app.put('/problems')
+// {
 	
-}
+// }
 
 // app.delete('/logout', (req, res) => {
 // 	req.logOut()
