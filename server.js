@@ -42,21 +42,21 @@ app.get('/', (req, res)=>{
 })
 
 app.get('/login', (req, res)=>{
-    res.render('login')
+    res.render('login', {prob:""})
 })
 
 app.get('/register', (req, res)=>{
-    res.render('register')
+    res.render('register', {prob:""})
 })
 
 
 app.post('/auth', async function(request, response) {
 	// Capture the input fields
-	const {name, password} = request.body
+	const {email, password} = request.body
 	// Ensure the input fields exists and are not empty
-	if (name && password) {
+	if (email && password) {
 		// Execute SQL query that'll select the account from the database based on the specified username and password
-		connection.query('SELECT * FROM users WHERE name = ?', [name], async function(error, results, fields) {
+		connection.query('SELECT * FROM users WHERE email = ?', [email], async function(error, results, fields) {
 			// If there is an issue with the query, output the error
 			if (error) throw error;
 			// If the account exists
@@ -64,15 +64,15 @@ app.post('/auth', async function(request, response) {
 				
 				// Authenticate the user
 				request.session.loggedin = true;
-				request.session.name = name;
-				request.session.email = results[0].email;
+				request.session.name = results[0].name;
+				request.session.email = email;
 				request.session.bio = results[0].bio;
-				request.session.id = results[0].ID;
-				// Redirect to home page
-				// response.redirect('/profile/'+results[0].ID);
+				request.session.userid = results[0].ID;
+				console.log(request.session.userid);
 				response.redirect('/home')
 			} else {
-				response.send('Incorrect Username and/or Password!');
+				
+				response.render('login', {prob:"incorrect"})
 			}			
 			response.end();
 		});
@@ -94,10 +94,12 @@ app.post('/reg', async (req, res)=>{
 				} 
 				else {
 					if (results.length > 0) {
-						res.send('Email already registered!')
+						// res.send('Email already registered!')
+						res.render('register', { prob : "email" })
 						res.end();
 					} else if (password != passwordConfirm) {
-						res.send('Passwords do not match!')
+						// res.send('Passwords do not match!')
+						res.render('register', { prob : "pass" })
 						res.end();
 					}
 					else {
@@ -108,7 +110,8 @@ app.post('/reg', async (req, res)=>{
 							if (err) {
 								console.log(err);
 							} else {
-								res.send('User registered');
+								// res.send('User registered');
+								res.render('login', {prob:"success"})
 								res.end();
 							}
 						})
@@ -118,19 +121,10 @@ app.post('/reg', async (req, res)=>{
 		)
 	}
 	else{
-		res.send('Enter all details')
+		res.render('register', { prob : "details" })
 	}
 })
 
-// app.get('/problems', (req, res)=>{
-// 	connection.query("SELECT * FROM problems", (err, results)=>{
-// 		if(err) throw err
-// 		else{
-// 			res.render('problems', {data:{profileName: req.session.name, action: 'list', problems: results}})
-// 		}
-// 	})
-	
-// })
 
 app.get("/problems", function(request, response, next){
 
@@ -144,7 +138,7 @@ app.get("/problems", function(request, response, next){
 		}
 		else
 		{
-			response.render('sample_data', {title:'Problems', action:'list', sampleData:data});
+			response.render('sample_data', {title:'Problems', action:'list', sampleData:data, userid: request.session.userid});
 		}
 
 	});
@@ -162,26 +156,25 @@ app.post('/add', (req, res)=>{
 				if (err) {
 					console.log(err);
 				} 
+				else if (results.length > 0) 
+						res.render('add', {data:{profileName: req.session.name, prob: "empty"}})
+					
 				else {
-					if (results.length > 0) {
-						res.send('Problem is already on the website!')
-					}
+					connection.query('INSERT INTO problems SET ?', { name: name, link: link, website: website, category: category }, (err, results) => {
+						if (err) {
+							console.log(err);
+						} else {
+							res.send('Problem Added');
+							res.end();
+						}
+					})
 				}
 			}
 		)
 	}
 	else{
-		res.send('Enter all problem details')
+		res.render('add', {data:{profileName: req.session.name, prob: "details"}})
 	}
-
-	connection.query('INSERT INTO problems SET ?', { name: name, link: link, website: website, category: category }, (err, results) => {
-		if (err) {
-			console.log(err);
-		} else {
-			res.send('Problem Added');
-			res.end();
-		}
-	})
 })
 
 app.get('/progress', (req, res)=>{
@@ -227,19 +220,9 @@ app.get('/profile/:id', function(request, response) {
 			}
 		})
 	}
-	// If the user is loggedin
-	
 );
 
-// app.put('/problems')
-// {
-	
-// }
 
-// app.delete('/logout', (req, res) => {
-// 	req.logOut()
-// 	res.redirect('/login')
-// })
 
 app.get('/logout',(req,res)=>{
 	req.session.destroy(function (err) {

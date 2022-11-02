@@ -16,6 +16,11 @@
           <div class="card-body p-md-5">
             <div class="row justify-content-center">
               <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1 mt-5">
+                <% if (prob==="success") { %>
+                  <div class="alert alert-success" role="alert">
+                    Registration Succesful
+                  </div>
+                <% } %>
 
                 <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Login</p>
                 <form class="mx-1 mx-md-4" action="/auth" method="POST">
@@ -23,8 +28,8 @@
                   <div class="d-flex flex-row align-items-center mb-4">
                     <i class="fas fa-user fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
-                      <input type="text" id="form3Example1c" name="name" class="form-control" />
-                      <label class="form-label" for="form3Example1c">Username</label>
+                      <input type="text" id="form3Example1c" name="email" class="form-control" />
+                      <label class="form-label" for="form3Example1c">Email</label>
                     </div>
                   </div>
 
@@ -35,7 +40,11 @@
                       <label class="form-label" for="form3Example4c">Password</label>
                     </div>
                   </div>
-
+                  <% if (prob==="incorrect") { %>
+                    <div class="alert alert-danger" role="alert">
+                      Incorrect email or password
+                    </div>
+                  <% } %>
                   <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                     <button type="submit" class="btn btn-outline-dark btn-lg">Login</button>
                   </div>

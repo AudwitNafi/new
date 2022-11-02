@@ -37,6 +37,16 @@
         <div class="mb-3">
             <input class="form-control" id="exampleInputPassword1" name="category" placeholder="Category">
         </div>
+        <% if (data.prob==="empty") { %>
+            <div class="alert alert-danger" role="alert">
+              Problem already on website
+            </div>
+        <% } %>
+        <% if (data.prob==="details") { %>
+            <div class="alert alert-danger" role="alert">
+              Enter all problem details
+            </div>
+        <% } %>
           <button type="submit" class="btn btn-dark mx-auto">Add</button>
     </form>
     

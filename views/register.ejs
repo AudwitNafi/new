@@ -59,12 +59,25 @@
                         <input type="password" id="form3Example4cd" name="passwordConfirm" class="form-control" />
                         <label class="form-label" for="form3Example4cd">Repeat your password</label>
                       </div>
-                    </div>                    
-  
+                    </div>
+                    <% if (prob==="email") { %>
+                      <div class="alert alert-danger" role="alert">
+                        Email already registered
+                      </div>
+                    <% } %>
+                    <% if (prob==="pass") { %>
+                      <div class="alert alert-danger" role="alert">
+                        Passwords do not match
+                      </div>
+                    <% } %>
+                    <% if (prob==="details") { %>
+                      <div class="alert alert-danger" role="alert">
+                        Enter all details
+                      </div>
+                    <% } %>
                     <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
                       <button type="submit" class="btn btn-outline-dark btn-lg">Register</button>
                     </div>
-  
                   </form>
                   <p>Already registered? <a href="/login" style="text-decoration: none;">Sign in</a></p>
                 </div>
