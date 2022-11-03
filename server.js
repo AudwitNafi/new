@@ -49,7 +49,6 @@ app.get('/register', (req, res)=>{
     res.render('register', {prob:""})
 })
 
-
 app.post('/auth', async function(request, response) {
 	// Capture the input fields
 	const {email, password} = request.body
@@ -68,7 +67,7 @@ app.post('/auth', async function(request, response) {
 				request.session.email = email;
 				request.session.bio = results[0].bio;
 				request.session.userid = results[0].ID;
-				console.log(request.session.userid);
+				// console.log(request.session.userid);
 				response.redirect('/home')
 			} else {
 				
@@ -77,12 +76,10 @@ app.post('/auth', async function(request, response) {
 			response.end();
 		});
 	} else {
-		response.send('Please enter Username and Password!');
+		response.render('login', { prob : "details" })
 		response.end();
 	}
 });
-
-
 
 app.post('/reg', async (req, res)=>{
 	console.log(req.body);
@@ -125,7 +122,6 @@ app.post('/reg', async (req, res)=>{
 	}
 })
 
-
 app.get("/problems", function(request, response, next){
 
 	var query = "SELECT * FROM problems";
@@ -138,12 +134,48 @@ app.get("/problems", function(request, response, next){
 		}
 		else
 		{
-			response.render('sample_data', {title:'Problems', action:'list', sampleData:data, userid: request.session.userid});
+			response.render('sample_data', {title:'Problems', action:'list', sampleData:data});
 		}
 
 	});
 
 });
+
+app.post("/problems", (req, res)=>{
+	const probid = req.body.probid;
+	console.log(probid);
+	// connection.query("INSERT INTO solved SET ?", {userID: req.session.userid, problemID: probid}, (err, results)=>{
+	// 	if(err) throw err
+	// 	else res.render('sample_data', {title:'Problems', action:'list', sampleData:data, status: "success"})
+	// })
+	connection.beginTransaction(function(err) {
+		if (err) { throw err; }
+		console.log(probid);
+		connection.query('INSERT INTO solve SET ?', {userID: req.session.userid, problemID: probid}, function (error, results, fields) {
+		  if (error) {
+			return connection.rollback(function() {
+			  throw error;
+			});
+		  }
+		  connection.query('UPDATE users SET solved=solved+1 WHERE id=?', req.session.userid, function (error, results, fields) {
+			if (error) {
+			  return connection.rollback(function() {
+				throw error;
+			  });
+			}
+			connection.commit(function(err) {
+			  if (err) {
+				return connection.rollback(function() {
+				  throw err;
+				});
+			  }
+			  console.log('success!');
+			});
+		  });
+		});
+		res.redirect('/problems')
+	  });
+})
 
 app.get('/add', (req, res)=>{
 	res.render('add', {data:{profileName: req.session.name}})
@@ -178,6 +210,8 @@ app.post('/add', (req, res)=>{
 })
 
 app.get('/progress', (req, res)=>{
+	const { id } = req.body
+	console.log(id);
 	res.render('progress', {data:{profileName: req.session.name}})
 })
 
@@ -221,8 +255,6 @@ app.get('/profile/:id', function(request, response) {
 		})
 	}
 );
-
-
 
 app.get('/logout',(req,res)=>{
 	req.session.destroy(function (err) {

@@ -1,15 +1,10 @@
-const connection = mysql.createConnection({
-	host     : 'localhost',
-	user     : 'root',
-	password : '',
-	database : 'project'
-});
+function solve(inp){
+    return inp.parentNode.parentNode.parentNode.firstElementChild.firstElementChild.innerHTML
+}
 
-function check(){
-    var arr = document.getElementsByClassName("form-check-input")
-
-    for(var i=0; i<arr.length; i++)
-    {
-        arr[i].checked = true
-    }
+function disable(btn)
+{
+    btn.disabled = true
+    btn.innerHTML = 'Solved'
+    btn.style.border = "none"
 }
