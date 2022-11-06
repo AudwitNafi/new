@@ -12,7 +12,8 @@ const connection = mysql.createConnection({
 	host     : 'localhost',
 	user     : 'root',
 	password : '',
-	database : 'project'
+	database : 'project',
+	multipleStatements: true
 });
 
 app.use(session({
@@ -122,32 +123,58 @@ app.post('/reg', async (req, res)=>{
 	}
 })
 
-app.get("/problems", function(request, response, next){
-
-	var query = "SELECT * FROM problems";
-
-	connection.query(query, function(error, data){
-
-		if(error)
-		{
-			throw error; 
-		}
+app.get("/problems", function(request, response){
+	connection.query("SELECT * FROM problems", function(error, data){
+		if(error) throw error; 
 		else
 		{
-			response.render('sample_data', {title:'Problems', action:'list', sampleData:data});
+			// connection.query('SELECT * FROM solve WHERE userID=?', [request.session.userid], (err, results)=>{
+			// 	if (err) throw err
+			// 	else {
+			// 		// console.log(request.session.userid);
+			// 		// console.log(data);
+			// 		console.log(results);
+			// 		response.render('sample_data', {title:'Problems', action:'list', sampleData:data});
+			// 	}
+			// })
+			// connection.query("SELECT COUNT(userID) FROM solve WHERE pro")
+			profile = request.session.name
+			response.render('sample_data', { title : 'Problems', action: 'List', sampleData: data, profileName: profile});
 		}
-
-	});
-
+	})
 });
+
+app.get('/problems', (req, res)=>{
+	connection.query("SELECT * FROM problems", function(err, result1) {
+		connection.query("SELECT * FROM solveby", function(err, result2) {
+			res.render('sample_data', { title : 'Problems', action: 'List', sampleData: result1, solved : result2 });
+		});
+	  });
+})
+
+app.get('/leaderboards', (req, res)=>{
+	connection.query('SELECT * FROM users ORDER BY solved DESC', (err, results)=>{
+		if(err) throw err
+		let profile = req.session.name 
+		res.render('leaderboards', {user: results, title: 'Leaderboards', profileName: profile})
+	})
+})
+
+// app.get('/test', (req, res)=>{
+// 	connection.query('SELECT * FROM problems', function(err, result1) {
+// 		let a = []
+// 		for(let i=0; i<result1.length; i++)
+// 			connection.query('SELECT count(userID) as sc FROM solve WHERE problemID=?',[req.session.userid], function(err, result2) {
+// 				a.push(result2)
+// 		});
+// 	  });
+// 	  console.log(a);
+// 	  res.render('test', { problems: result1, solved : a });
+// })
 
 app.post("/problems", (req, res)=>{
 	const probid = req.body.probid;
 	console.log(probid);
-	// connection.query("INSERT INTO solved SET ?", {userID: req.session.userid, problemID: probid}, (err, results)=>{
-	// 	if(err) throw err
-	// 	else res.render('sample_data', {title:'Problems', action:'list', sampleData:data, status: "success"})
-	// })
 	connection.beginTransaction(function(err) {
 		if (err) { throw err; }
 		console.log(probid);
@@ -163,18 +190,25 @@ app.post("/problems", (req, res)=>{
 				throw error;
 			  });
 			}
-			connection.commit(function(err) {
-			  if (err) {
-				return connection.rollback(function() {
-				  throw err;
+			connection.query('UPDATE solvedby SET solveCount=solveCount+1 WHERE problemID=?', [probid], function (error, results, fields) {
+				if (error) {
+				  return connection.rollback(function() {
+					throw error;
+				  });
+				}
+				connection.commit(function(err) {
+					if (err) {
+						return connection.rollback(function() {
+						throw err;
+						});
+					}
+					console.log('success!');
 				});
-			  }
-			  console.log('success!');
-			});
-		  });
+		  	});
 		});
 		res.redirect('/problems')
 	  });
+	})
 })
 
 app.get('/add', (req, res)=>{
@@ -212,7 +246,7 @@ app.post('/add', (req, res)=>{
 app.get('/progress', (req, res)=>{
 	const { id } = req.body
 	console.log(id);
-	res.render('progress', {data:{profileName: req.session.name}})
+	res.render('progress', {data: {profileName: req.session.name}})
 })
 
 app.put('/rank', (req, res)=>{
@@ -244,7 +278,7 @@ app.get('/profile/:id', function(request, response) {
 					// console.log('name', name);
 					// console.log('email', email);
 					console.log('bio', bio);
-					response.render('profile', {data: { name: name, email: email, profileName: name, bio: bio }} );
+					response.render('profile', {data:{ name: name, email: email, bio: bio }} );
 				} else {
 					// Not logged in
 					response.redirect('/login');

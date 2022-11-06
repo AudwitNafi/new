@@ -32,8 +32,14 @@
             
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
+                    <a class="nav-link" href="/leaderboards">Leaderboards</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile"><%= profileName %></a>
+                </li>
+                <li class="nav-item">
                   <a class="nav-link" href="/problems">Problems</a>
-              </li>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/progress">Track Your Progress</a>
                 </li>
@@ -107,25 +113,26 @@
                                             <th>Category</th>
                                             <th>Solved by</th>
                                         </tr>
-                                        <%
-                                        if(sampleData.length > 0)
+                                        <% if(sampleData.length > 0)
                                         {
-                                            sampleData.forEach(function(data){
+                                            for(let i=0; i<sampleData.length; i++){                                            
                                         %>
                                         <tr>
-                                            <td><a href="<%= data.link %>"><%= data.name %></a></td>
+                                            <td><a href="<%= sampleData[i].link %>"><%= sampleData[i].name %></a></td>
                                             <td>
-                                                <form action="/problems" method="POST" onsubmit="myButton.disabled = true; return true;">
-                                                    <input type="text" name="probid" readonly class="form-control-plaintext" value="<%= data.id %>" style="display: none;">
+                                                
+                                                <form action="/problems" method="POST">
+                                                    <input type="text" name="probid" readonly class="form-control-plaintext" value="<%= sampleData[i].id %>" style="display: none;">
                                                     <button type="submit" class="btn btn-outline-dark btn-sm">Solve</button>
                                                 </form>
+                                                
                                             </td>
-                                            <td><%= data.website%></td>
-                                            <td><%= data.category%></td>
-                                            <td></td>
+                                            <td><%= sampleData[i].website%></td>
+                                            <td><%= sampleData[i].category%></td>
+                                            
                                         </tr>
                                         <%
-                                            });
+                                            }
                                         }
                                         else
                                         {
