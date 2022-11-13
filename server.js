@@ -4,6 +4,7 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs')
 const path = require('path');
+const e = require('express');
 
 const app = express()
 
@@ -123,34 +124,53 @@ app.post('/reg', async (req, res)=>{
 	}
 })
 
-app.get("/problems", function(request, response){
-	connection.query("SELECT * FROM problems", function(error, data){
-		if(error) throw error; 
-		else
-		{
-			// connection.query('SELECT * FROM solve WHERE userID=?', [request.session.userid], (err, results)=>{
-			// 	if (err) throw err
-			// 	else {
-			// 		// console.log(request.session.userid);
-			// 		// console.log(data);
-			// 		console.log(results);
-			// 		response.render('sample_data', {title:'Problems', action:'list', sampleData:data});
-			// 	}
-			// })
-			// connection.query("SELECT COUNT(userID) FROM solve WHERE pro")
-			profile = request.session.name
-			response.render('sample_data', { title : 'Problems', action: 'List', sampleData: data, profileName: profile});
-		}
-	})
-});
+// app.get("/problems", function(request, response){
+// 	connection.query("SELECT * FROM problems ORDER BY id DESC", function(error, data){
+// 		if(error) throw error; 
+// 		else
+// 		{
+// 			connection.query('SELECT * FROM solvedby', (err, results)=>{
+// 				if(err) throw err
+// 				console.log(results);
+// 				profile = request.session.name
+// 				response.render('sample_data', { title : 'Problems', action: 'List', sampleData: data, profileName: profile, solvecount: results});
+// 			})
+// 		}
+// 	})
+// });
 
 app.get('/problems', (req, res)=>{
-	connection.query("SELECT * FROM problems", function(err, result1) {
-		connection.query("SELECT * FROM solveby", function(err, result2) {
-			res.render('sample_data', { title : 'Problems', action: 'List', sampleData: result1, solved : result2 });
-		});
-	  });
+	connection.query('SELECT problemID FROM solve WHERE userID=?',  [req.session.userid], (err, solvedID)=>{
+		let solved = []
+		for(let i=0; i<solvedID.length; i++) solved.push(solvedID[i].problemID)
+		
+		var sql = `SELECT * FROM problems WHERE id IN ('${solved.join("','")}') ORDER BY id ASC`
+		connection.query(sql, (err, solve)=>{
+			var sql1 = `SELECT * FROM problems WHERE id NOT IN ('${solved.join("','")}') ORDER BY id ASC`
+			connection.query(sql1, (err, unsolved)=>{
+				connection.query(`SELECT * FROM solvedby WHERE problemID IN ('${solved.join("','")}') `, (err, ssc)=>{
+					connection.query(`SELECT * FROM solvedby WHERE problemID NOT IN ('${solved.join("','")}') `, (err, usc)=>{
+						let profile = req.session.name
+						res.render('sample_data', { title : 'Problems', action: 'List', solve: solve, unsolved: unsolved, ssc: ssc, usc: usc, profileName: profile})
+					})
+				})
+			})
+		})
+	})
 })
+
+
+// app.get('/test', (req, res)=>{
+// 	connection.query("SELECT * FROM problems", function(err, result1) {
+// 		connection.query("SELECT * FROM solvedby", function(err, result2) {
+// 			connection.query("SELECT problemID FROM solve WHERE userID=?", [req.session.userid], (err, result3)=>{
+// 				console.log(result3);
+// 				res.render('test', { title : 'Problems', action: 'List', problems: result1, solved : result2, s: result3 })
+// 			})
+// 			;
+// 		});
+// 	  });
+// })
 
 app.get('/leaderboards', (req, res)=>{
 	connection.query('SELECT * FROM users ORDER BY solved DESC', (err, results)=>{
@@ -221,21 +241,52 @@ app.post('/add', (req, res)=>{
 		connection.query('SELECT name from problems WHERE name = ?', [name], async (err, results) => {
 				if (err) {
 					console.log(err);
-				} 
+				}
 				else if (results.length > 0) 
 						res.render('add', {data:{profileName: req.session.name, prob: "empty"}})
 					
 				else {
-					connection.query('INSERT INTO problems SET ?', { name: name, link: link, website: website, category: category }, (err, results) => {
-						if (err) {
-							console.log(err);
-						} else {
-							res.send('Problem Added');
-							res.end();
-						}
+					// connection.query('INSERT INTO problems SET ?', { name: name, link: link, website: website, category: category }, (err, results) => {
+					// 	if (err) {
+					// 		console.log(err);
+					// 	} else {
+					// 		res.send('Problem Added');
+					// 		res.end();
+					// 	}
+					// })
+					// let probCount = 0
+					// connection.query('SELECT COUNT(probid) as probcount FROM problems', (err, probs)=>{
+					// 	if(err) throw err;
+					// 	console.log(probs);
+					// 	probCount = probs.probcount
+					// })
+					connection.beginTransaction((err)=>{
+						if(err) throw err
+						connection.query('INSERT INTO problems SET ?', {name: name, link: link, website: website, category: category}, function (error, results, fields) {
+							if (error) {
+							  return connection.rollback(function() {
+								throw error;
+							  });
+							}
+							connection.query('INSERT INTO solvedby SET solveCount=0', (err)=>{
+								if (error) {
+									return connection.rollback(function() {
+									  throw error;
+									});
+								}
+								connection.commit(function(err) {
+									if (err) {
+										return connection.rollback(function() {
+										throw err;
+										});
+									}
+									console.log('success!');
+								});
+							})
+						})
 					})
+					}
 				}
-			}
 		)
 	}
 	else{
@@ -245,8 +296,24 @@ app.post('/add', (req, res)=>{
 
 app.get('/progress', (req, res)=>{
 	const { id } = req.body
-	console.log(id);
-	res.render('progress', {data: {profileName: req.session.name}})
+	let profile = req.session.name
+	let cat = ["Algorithms", "Data Structures", "Brute Force", "Mathematics", "Graphs", "Hashing", "Dynamic Programming", "Strings", "Binary Search", "Probabilities"]
+	let count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+	let userid = req.session.userid
+	for(let i=0; i<10;i++)
+	{
+		connection.query('SELECT COUNT(problemID) as sc FROM solve WHERE userID=? AND problemID IN(SELECT id FROM PROBLEMS WHERE CATEGORY=?)', [userid, cat[i]], (err, results)=>{
+			// console.log(results);
+			count[i] = results[0].sc
+			// console.log(results[0].sc);
+			if(i==9){
+				console.log(count);
+				res.render('progress', {data: {profileName: profile, solve: count}})
+			}
+		})
+	}
+	// console.log(count);
+	// res.render('progress', {data: {profileName: req.session.name}})
 })
 
 app.put('/rank', (req, res)=>{
@@ -254,7 +321,7 @@ app.put('/rank', (req, res)=>{
 })
 
 app.get('/profile', (req, res)=>{
-	res.redirect('/profile/'+req.session.id)
+	res.redirect('/profile/'+req.session.userid)
 })
 
 app.get('/profile/:id', function(request, response) {
@@ -262,7 +329,10 @@ app.get('/profile/:id', function(request, response) {
 	// console.log(request.session.name);
 	// console.log(request.session.email);
 	let name, email, bio
-	connection.query('SELECT * FROM users WHERE id = ?', [id], async(err, results)=>{
+	name = request.session.name
+	email = request.session.email
+	bio = request.session.bio
+	connection.query('SELECT solved FROM users WHERE id = ?', [id], async(err, results)=>{
 			if (err) {
 				console.log(err);
 			} 
@@ -270,15 +340,10 @@ app.get('/profile/:id', function(request, response) {
 				if (results.length > 0) {
 					console.log(results)
 				}
-				name = request.session.name
-				email = request.session.email
-				bio = request.session.bio
 				if (request.session.loggedin) {
-					// Output username
-					// console.log('name', name);
-					// console.log('email', email);
 					console.log('bio', bio);
-					response.render('profile', {data:{ name: name, email: email, bio: bio }} );
+					console.log(results);
+					response.render('profile', {data:{ name: name, email: email, bio: bio, solved: results[0] }} );
 				} else {
 					// Not logged in
 					response.redirect('/login');
@@ -290,11 +355,41 @@ app.get('/profile/:id', function(request, response) {
 	}
 );
 
+app.get('/edit', (req, res)=>{
+	res.render('edit', {data:{profileName: req.session.name}})
+})
+
+app.post('/edit', (req, res)=>{
+	const {name, bio} = req.body
+	if(name && bio)
+	{
+		connection.query('SELECT * FROM users WHERE name=?', name, (err, results)=>{
+			if(err) throw err;
+			if(results.length>0) res.render('edit', {data:{profileName: req.session.name, prob: "empty"}})
+			else {
+				connection.query('UPDATE users SET ? WHERE id=?',[{name: name, bio: bio}, req.session.userid] , (err, result)=>{
+					req.session.name = name;
+					req.session.bio = bio;
+					res.redirect('/profile')
+				})
+			}
+		})
+	}
+	else {
+		res.render('edit', {data:{profileName: req.session.name, prob: "details"}})
+	}
+})
+
 app.get('/logout',(req,res)=>{
 	req.session.destroy(function (err) {
 	  	res.redirect('/'); //Inside a callback… bulletproof!
 	 });
-  })
+})
+
+app.get('/faq', (req, res)=>{
+	if(req.session.loggedin) res.render('faq', {log: 1})
+	else res.render('faq', {log: 0})
+})
 
 app.listen(4000, ()=>{
     console.log('Server running on port 4000');

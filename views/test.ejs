@@ -20,24 +20,30 @@
                     <table rules=none class="table table-bordered problem-table">
                         
                         <tr>
-                            <th colspan="2" style="text-align: center;">Name</th>
+                            <th style="text-align: center;">Name</th>
                             <!-- <th></th> -->
-                            <th>Website</th>
-                            <th>Category</th>
-                            <th>Solved by</th>
+                            <th>Solve</th>
+                            <th></th>
                         </tr>
-                        <% if(problems.length > 0){ %>
-                            <% for(let i=0; i<problems.length; i++){ %>
+                        <% if(solve.length + unsolved.length > 0){ %>
+                            <% for(let i=0; i<solve.length; i++){ %>
                                 <tr>
-                                    <td><a href="<%= problems[i].link %>"><%= problems[i].name %></a></td>
-                                    <td><%= solved[i].sc %></td>
+                                    <td><a href="<%= solve[i].link %>"><%= solve[i].name %></a></td>
+                                    <td>Solved</td>
+                                    <td><%= ssc[i].solveCount %></td>
+                                </tr>
+                            <% } for(let i=0; i<unsolved.length; i++){ %>
+                                <tr>
+                                    <td><a href="<%= unsolved[i].link %>"><%= unsolved[i].name %></a></td>
+                                    <td>Not Solved</td>
+                                    <td><%= usc[i].solveCount %></td>
                                 </tr>
                             <% } 
-                            }else{ %>
+                        }else{ %>
                                 <tr>
                                     <td colspan="5">No problems Found</td>
                                 </tr>
-                            <% } %>
+                        <% } %>
                     </table>
                 </div>
             </div>
@@ -47,4 +53,3 @@
         <script src="solved.js"></script>
     </body>
 </html>
-

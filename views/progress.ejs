@@ -1,31 +1,21 @@
 <%- include("inner-header") -%>
 
 <div class="container">
-    <canvas style="margin: auto" id="myChart" style="width:100%;max-width:600px"></canvas>
+    <canvas style="margin: auto" id="myChart"></canvas>
+    <ul style="display: none;">
+      <li class='yValues'><%= data.solve[0] %></li>
+      <li class='yValues'><%= data.solve[1] %></li>
+      <li class='yValues'><%= data.solve[2] %></li>
+      <li class='yValues'><%= data.solve[3] %></li>
+      <li class='yValues'><%= data.solve[4] %></li>
+      <li class='yValues'><%= data.solve[5] %></li>
+      <li class='yValues'><%= data.solve[6] %></li>
+      <li class='yValues'><%= data.solve[7] %></li>
+      <li class='yValues'><%= data.solve[8] %></li>
+      <li class='yValues'><%= data.solve[9] %></li>
+    </ul>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-<script>
-    var xValues = ["Algorithms", "Data Structures", "Brute Force", "Mathematics", "Graphs", "Hashing", "Dynamic Programming", "Strings", "Binary Search", "Probabilities"];
-    var yValues = [5, 2, 3, 6, 2, 3, 4, 1, 6, 2];
-    var barColors = ["red", "green","blue","orange","brown","yellow","aqua","purple","magenta", "teal"];
-    
-    new Chart("myChart", {
-      type: "bar",
-      data: {
-        labels: xValues,
-        datasets: [{
-          backgroundColor: barColors,
-          data: yValues
-        }]
-      },
-      options: {
-        legend: {display: false},
-        title: {
-          display: true,
-          text: "Your Problem Solving Progress"
-        }
-      }
-    });
-    </script>
+<script src="chart.js"></script>
 
 <%- include("footer") -%>

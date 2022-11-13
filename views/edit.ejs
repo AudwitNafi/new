@@ -22,34 +22,26 @@
 
 
 <div class="container-lg">
-
-    <form action="/add" method="POST">
-        <h3>Enter problem details</h3>
+    <form action="/edit" method="POST">
+        <h3>Update Your Profile</h3>
         <div class="mb-3">
-          <input class="form-control" id="exampleInputEmail1" name="name" placeholder="Name">
+          <input class="form-control" name="name" placeholder="Enter New Userame">
         </div>
         <div class="mb-3">
-            <input class="form-control" id="exampleInputEmail1" name="link" placeholder="Link">
-          </div>
-        <div class="mb-3">
-          <input class="form-control" id="exampleInputPassword1" name="website" placeholder="Website">
-        </div>
-        <div class="mb-3">
-            <input class="form-control" id="exampleInputPassword1" name="category" placeholder="Category">
+            <input class="form-control" name="bio" placeholder="Enter New Bio">
         </div>
         <% if (data.prob==="empty") { %>
             <div class="alert alert-danger" role="alert">
-              Problem already on website
+              Username already taken
             </div>
         <% } %>
         <% if (data.prob==="details") { %>
             <div class="alert alert-danger" role="alert">
-              Enter all problem details
+              Enter all details
             </div>
         <% } %>
-          <button type="submit" class="btn btn-dark mx-auto">Add</button>
+          <button type="submit" class="btn btn-dark mx-auto">Save Changes</button>
     </form>
-    
 </div>
 
 <%- include("footer") -%>

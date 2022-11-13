@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Pacifico&family=Play&family=Sawarabi+Mincho&family=Ubuntu:wght@300&display=swap" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="/css/styles.css"> -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+    <title>Document</title>
+    <style>
+        /* Google fonts - Open Sans */
+        @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700);
+        /* colors */
+        /* body */
+        body {
+        background: rgba(0, 0, 0, 0.9) !important;
+        font-family: "Open Sans", sans-serif !important;
+        }
+
+        /* links */
+        .nfl a, .mlb a, .nhl a, .pga a {
+        text-decoration: none !important; 
+        transition: color 0.2s ease-out !important;
+        }
+
+        .nfl a {
+        color: rgb(79, 192, 210) !important;
+        }
+
+        .nfl a:hover {
+        color: #268695 !important;
+        }
+
+        .mlb a {
+        color: rgb(82, 210, 154) !important;
+        }
+
+        .mlb a:hover {
+        color: #279766 !important;
+        }
+
+        .nhl a {
+        color: rgba(231, 196, 104, 0.7) !important;
+        }
+
+        .nhl a:hover {
+        color: rgba(201, 154, 32, 0.7) !important;
+        }
+
+        .pga a {
+        color: rgb(235, 118, 85) !important;
+        }
+
+        .pga a:hover {
+        color: #c33d17 !important;
+        }
+
+        /* wrapper */
+        .wrapper {
+        width: 100% !important;
+        max-width: 1000px !important;
+        margin: 20px auto 100px auto !important;
+        padding: 0 !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        overflow: hidden !important;
+        position: relative !important;
+        }
+
+        /* lists */
+        .row ul {
+        margin: 0 !important;
+        padding: 0 !important;
+        }
+
+        .row ul li {
+        margin: 0 !important;
+        font-size: 16px !important;
+        font-weight: normal !important;
+        list-style: none !important;
+        display: inline-block !important;
+        width: 20% !important;
+        box-sizing: border-box !important;
+        }
+        @media only screen and (max-width: 767px) and (min-width: 480px) {
+        .row ul li {
+            font-size: 13px !important;
+        }
+        }
+        @media only screen and (max-width: 479px) {
+        .row ul li {
+            font-size: 13px !important;
+        }
+        }
+
+        .title ul li {
+        padding: 15px 13px !important;
+        }
+
+        .row ul li {
+        padding: 5px 10px !important;
+        }
+
+        /* rows */
+        .row {
+        padding: 20px 0 !important;
+        height: 30px !important;
+        font-size: 0 !important;
+        position: relative !important;
+        overflow: hidden !important;
+        transition: all 0.2s ease-out !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .row:hover {
+        background-color: rgba(26, 26, 26, 0.9) !important;
+        height: 65px !important;
+        }
+        @media only screen and (max-width: 767px) {
+        .row:hover {
+            height: 85px !important;
+        }
+        }
+        @media only screen and (max-width: 359px) {
+        .row:hover {
+            height: 105px !important;
+        }
+        }
+
+        .title {
+        padding: 25px 0 5px 0 !important;
+        height: 45px !important;
+        font-size: 0 !important;
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-left: 3px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .title:hover {
+        height: 45px !important;
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-left: 3px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        @media only screen and (max-width: 767px) {
+        .title-hide {
+            display: none !important;
+        }
+        }
+
+        .nfl {
+        border-left: 3px solid #1c616c !important;
+        }
+
+        .nfl:hover {
+        border-left: 3px solid rgb(79, 192, 210) !important;
+        }
+
+        .mlb {
+        border-left: 3px solid #1d6e4b !important;
+        }
+
+        .mlb:hover {
+        border-left: 3px solid rgb(82, 210, 154) !important;
+        }
+
+        .nhl {
+        border-left: 3px solid rgba(157, 121, 25, 0.7) !important;
+        }
+
+        .nhl:hover {
+        border-left: 3px solid rgba(231, 196, 104, 0.7) !important;
+        }
+
+        .pga {
+        border-left: 3px solid #952f12 !important;
+        }
+
+        .pga:hover {
+        border-left: 3px solid rgb(235, 118, 85) !important;
+        }
+
+        /* row one - fadeIn */
+        .row-fadeIn-wrapper {
+        opacity: 0 !important;
+        font-size: 0 !important;
+        height: 0 !important;
+        overflow: hidden !important;
+        position: relative !important;
+        transition: all 0.2s ease-out !important;
+        animation: fadeIn 0.4s ease-out 2s 1 alternate !important;
+        animation-fill-mode: forwards !important;
+        }
+
+        .row-fadeIn-wrapper:hover {
+        height: 35px !important;
+        }
+        @media only screen and (max-width: 767px) {
+        .row-fadeIn-wrapper:hover {
+            height: 55px !important;
+        }
+        }
+        @media only screen and (max-width: 359px) {
+        .row-fadeIn-wrapper:hover {
+            height: 75px !important;
+        }
+        }
+
+        .fadeIn {
+        padding: 20px 0 !important;
+        font-size: 0 !important;
+        position: absolute !important;
+        transition: all 0.2s ease-out !important;
+        width: 100% !important;
+        }
+
+        .fadeIn:hover {
+        background-color: rgba(26, 26, 26, 0.9) !important;
+        }
+
+        /* row two - fadeOut */
+        .row-fadeOut-wrapper {
+        font-size: 0 !important;
+        overflow: hidden !important;
+        position: relative !important;
+        transition: all 0.2s ease-out !important;
+        animation: fadeOut 0.4s ease-out 8s 1 alternate !important;
+        animation-fill-mode: forwards !important;
+        opacity: 1 !important;
+        height: 65px !important;
+        }
+
+        .row-fadeOut-wrapper:hover {
+        height: 100px !important;
+        }
+
+        /* update content */
+        .update-row {
+        animation: update 0.5s ease-out 12s 1 alternate !important;
+        }
+
+        .update1 {
+        position: absolute !important;
+        top: 25px !important;
+        display: inline-block !important;
+        opacity: 1 !important;
+        animation: update1 1s ease-out 12s 1 alternate !important;
+        animation-fill-mode: forwards !important;
+        }
+
+        .update2 {
+        position: absolute !important;
+        top: 25px !important;
+        display: inline-block !important;
+        opacity: 0 !important;
+        animation: update2 4s ease-out 13s 1 alternate !important;
+        animation-fill-mode: forwards !important;
+        }
+
+        /* more content */
+        ul.more-content li {
+        position: relative !important;
+        top: 22px !important;
+        font-size: 13px !important;
+        margin: 0 !important;
+        padding: 10px 13px !important;
+        display: block !important;
+        height: 50px !important;
+        width: 100% !important;
+        color: rgba(128, 128, 128, 0.9) !important;
+        }
+        @media only screen and (max-width: 767px) {
+        ul.more-content li {
+            font-size: 11px !important;
+        }
+        }
+
+        /* small content */
+        .small {
+        color: rgba(102, 102, 102, 0.9) !important;
+        font-size: 10px !important;
+        padding: 0 10px !important;
+        margin: 0 !important;
+        }
+        @media only screen and (max-width: 767px) {
+        .small {
+            display: none !important;
+        }
+        }
+
+        /* keyframe animations */
+        @keyframes fadeIn {
+        from {
+            background: rgba(255, 255, 255, 0.1) !important;
+            opacity: 0 !important;
+            padding: 0 !important;
+        }
+        to {
+            background: rgba(51, 51, 51, 0.1) !important;
+            opacity: 1 !important;
+            padding: 0 0 65px 0 !important;
+        }
+        }
+        @keyframes fadeOut {
+        from {
+            background: rgba(51, 51, 51, 0.1);
+            opacity: 1;
+            height: 65px;
+        }
+        to {
+            background: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            height: 0;
+        }
+        }
+        @keyframes update {
+        0% {
+            background: rgba(51, 51, 51, 0.1) !important;
+        }
+        50% {
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+        100% {
+            background: rgba(51, 51, 51, 0.1) !important;
+        }
+        }
+        @keyframes update1 {
+        0% {
+            opacity: 0 !important;
+        }
+        0% {
+            opacity: 1 !important;
+        }
+        100% {
+            opacity: 0 !important;
+        }
+        }
+        @keyframes update2 {
+        0% {
+            opacity: 0;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        20% {
+            opacity: 1;
+            color: rgb(82, 210, 154) !important;
+        }
+        100% {
+            opacity: 1;
+            color: rgba(255, 255, 255, 0.9) !important;
+        }
+        }
+
+        /*# sourceMappingURL=style.css.map */
+
+    </style>
+</head>
+
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a id="Knapsack" class="navbar-brand" style="padding: 0 15px;" href="/home">Knapsack</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+          
+          <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                <a class="nav-link" href="/profile"><%= profileName %></a>
+                </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/problems">Problems</a>
+                </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="/progress">Track Your Progress</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
+                  aria-expanded="false">More</a>
+                <ul class="dropdown-menu">
+                  <li><a class="dropdown-item" href="">About Us</a></li>
+    
+                  <li><a class="dropdown-item" href="">FAQ</a></li>
+    
+                  <li><a class="dropdown-item" href="">Contact</a></li>
+    
+                </ul>
+              </li>
+          </ul>
+        </div>
+    </nav>
+    <section class="wrapper">
+        <!-- Row title -->
+        <main class="row title">
+          <ul>
+            <li>Sport</li>
+            <li>Entry $</li>
+            <li><span class="title-hide">#</span> Entries</li>
+            <li>Max</li>
+            <li>Time</li>
+          </ul>
+        </main>
+        <!-- Row 1 - fadeIn -->
+        <section class="row-fadeIn-wrapper">
+          <article class="row fadeIn nfl">
+            <ul>
+              <li><a href="#">NFL</a><span class="small">(fadeIn)</span></li>
+              <li>$50</li>
+              <li>12</li>
+              <li>48</li>
+              <li>2:00ET</li>
+            </ul>
+            <ul class="more-content">
+              <li>This 1665-player contest boasts a $300,000.00 prize pool and pays out the top 300 finishing positions. First place wins $100,000.00. Good luck!</li>
+            </ul>
+          </article>
+        </section>
+        <!-- Row 2 - fadeOut -->
+        <section class="row-fadeOut-wrapper">
+          <article class="row nfl">
+            <ul>
+              <li><a href="#">NFL</a><span class="small">(fadeOut)</span></li>
+              <li>$5</li>
+              <li>45</li>
+              <li>100</li>
+              <li>3:00ET</li>
+            </ul>
+            <ul class="more-content">
+              <li>This 1665-player contest boasts a $300,000.00 prize pool and pays out the top 300 finishing positions. First place wins $100,000.00. Good luck!</li>
+            </ul>
+          </article>
+        </section>
+        <!-- Row 3 -->
+        <article class="row nfl">
+          <ul>
+            <li><a href="#">NHL</a></li>
+            <li>$50</li>
+            <li>12</li>
+            <li>48</li>
+            <li>12:00ET</li>
+          </ul>
+          <ul class="more-content">
+            <li>This 1665-player contest boasts a $300,000.00 prize pool and pays out the top 300 finishing positions. First place wins $100,000.00. Good luck!</li>
+          </ul>
+        </article>
+        <!-- Row 4 -->
+        <article class="row mlb update-row">
+          <ul>
+            <li><a href="#">MLB</a><span class="small">(update)</span></li>
+            <li>$10</li>
+            <li><span class="update1">1</span><span class="update2">2</span></li>
+            <li>10</li>
+            <li>1:00ET</li>
+          </ul>
+          <ul class="more-content">
+            <li>This 1665-player contest boasts a $300,000.00 prize pool and pays out the top 300 finishing positions. First place wins $100,000.00. Good luck!</li>
+          </ul>
+        </article>
+        <!-- Row 5 -->
+        <article class="row mlb">
+          <ul>
+            <li><a href="#">MLB</a></li>
+            <li>$5</li>
+            <li>48</li>
+            <li>120</li>
+            <li>12:00ET</li>
+          </ul>
+          <ul class="more-content">
+            <li>This 1665-player contest boasts a $300,000.00 prize pool and pays out the top 300 finishing positions. First place wins $100,000.00. Good luck!</li>
+          </ul>
+        </article>
+        <!-- Row 6 -->
+        <article class="row nhl">
+          <ul>
+            <li><a href="#">NHL</a></li>
+            <li>$50</li>
+            <li>12</li>
+            <li>48</li>
+            <li>12:00ET</li>
+          </ul>
+          <ul class="more-content">
+            <li>This 1665-player contest boasts a $300,000.00 prize pool and pays out the top 300 finishing positions. First place wins $100,000.00. Good luck!</li>
+          </ul>
+        </article>
+        <!-- Row 7 -->
+        <article class="row nhl">
+          <ul>
+            <li><a href="#">NHL</a></li>
+            <li>$50</li>
+            <li>12</li>
+            <li>48</li>
+            <li>12:00ET</li>
+          </ul>
+          <ul class="more-content">
+            <li>This 1665-player contest boasts a $300,000.00 prize pool and pays out the top 300 finishing positions. First place wins $100,000.00. Good luck!</li>
+          </ul>
+        </article>
+        <!-- Row 8 -->
+        <article class="row pga">
+          <ul>
+            <li><a href="#">PGA</a></li>
+            <li>$50</li>
+            <li>12</li>
+            <li>48</li>
+            <li>11:00ET</li>
+          </ul>
+          <ul class="more-content">
+            <li>This 1665-player contest boasts a $300,000.00 prize pool and pays out the top 300 finishing positions. First place wins $100,000.00. Good luck!</li>
+          </ul>
+        </article>
+        <!-- Row 9 -->
+        <article class="row pga">
+          <ul>
+            <li><a href="#">PGA</a></li>
+            <li>$50</li>
+            <li>12</li>
+            <li>48</li>
+            <li>11:00ET</li>
+          </ul>
+          <ul class="more-content">
+            <li>This 1665-player contest boasts a $300,000.00 prize pool and pays out the top 300 finishing positions. First place wins $100,000.00. Good luck!</li>
+          </ul>
+        </article>
+        <!-- Row 10 -->
+        <article class="row pga">
+          <ul>
+            <li><a href="#">PGA</a></li>
+            <li>$50</li>
+            <li>12</li>
+            <li>48</li>
+            <li>11:00ET</li>
+          </ul>
+          <ul class="more-content">
+            <li>This 1665-player contest boasts a $300,000.00 prize pool and pays out the top 300 finishing positions. First place wins $100,000.00. Good luck!</li>
+          </ul>
+        </article>
+        <!-- Row 11 -->
+        <article class="row mlb">
+          <ul>
+            <li><a href="#">MLB</a></li>
+            <li>$10</li>
+            <li>1</li>
+            <li>10</li>
+            <li>1:00ET</li>
+          </ul>
+          <ul class="more-content">
+            <li>This 1665-player contest boasts a $300,000.00 prize pool and pays out the top 300 finishing positions. First place wins $100,000.00. Good luck!</li>
+          </ul>
+        </article>
+      </section>
+</body>
+
+<!-- 
+<table>
+    <thead>
+        <tr>
+            <th>Rank</th>
+            <th>User</th>
+            <th>Problems Solved</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <% if(user.length>0){ 
+                for(let i=0; i<user.length; i++){ %>
+                    <tr>
+                        <% if(i==0) { %>
+                            <td><h3><i class="fa-solid fa-star"></i><%= i+1 %></h3></td>
+                            <td><h3><%= user[i].name %></h3></td>
+                            <td><h3><%= user[i].solved %></h3></td>
+                        <% } else if(i==1) { %>
+                            <td><h4><%= i+1 %></h4></td>
+                            <td><h4><%= user[i].name %></h4></td>
+                            <td><h4><%= user[i].solved %></h4></td>
+                        <% } else if(i==2) { %>
+                            <td><h5><%= i+1 %></h5></td>
+                            <td><h5><%= user[i].name %></h5></td>
+                            <td><h5><%= user[i].solved %></h5></td>
+                        <% } else { %>
+                            <td><%= i+1 %></td>
+                            <td><%= user[i].name %></td>
+                            <td><%= user[i].solved %></td>
+                        <% } %>
+                    </tr>
+                <% }
+            } else { %>
+                <tr><td>No users</td></tr>
+            <% } %>
+        </tr>
+
+    </tbody>
+</table> -->

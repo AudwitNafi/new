@@ -1,9 +1,72 @@
-<%- include("inner-header") -%>
-    <section class="prob-section">
+<!DOCTYPE html>
+<html>
 
-        <div>
+<head>
+  <meta charset="utf-8">
+  <title>Knapsack</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat&family=Pacifico&family=Play&family=Sawarabi+Mincho&family=Ubuntu:wght@300&display=swap" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+ 
+
+</head>
+
+<body onload="sortOnLoad()">
+
+    <section id="title">
+  
+      
+        
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+          <a id="Knapsack" class="navbar-brand" style="padding: 0 15px;" href="/home">Knapsack</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+          </button>
+        
+          <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+            
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/leaderboards">Leaderboards</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/profile"><%= profileName %></a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/problems">Problems</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/progress">Track Your Progress</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/logout">Logout</a>
+                </li>
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false">More</a>
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="">About Us</a></li>
+      
+                    <li><a class="dropdown-item" href="">FAQ</a></li>
+      
+                    <li><a class="dropdown-item" href="">Contact</a></li>
+      
+                  </ul>
+                </li>
+            </ul>
+          </div>
+        </nav>
+        <h1 class="text-center mt-3 mb-3"><%= title %></h1>
+        <div class="container-sm">
+            
+            
             <div class="row">
-                <div class="col-lg-3 prob-categories" style="height: 420px;">
+                <div class="col-lg-3 prob-categories" style="height: 440px;">
                     <div style="background-color: #ddd; margin-top: 10px; border-radius: 5px;">
                         <h3 style="text-align: center; margin:0;">Categories</h3>
                     </div>
@@ -26,166 +89,59 @@
                                 placeholder="Type to Search...">
                         </div>
                     </form>
+                    <h2 style="text-align: center; margin:0;"><button type="button" class="btn btn-info"><a href="/add" style="color: #fff;">Add a problem</a></button></h2>
+                </div>
+                <div class="col-lg-7">
+                    <% if(action == 'add') { %>
 
+                        <% } else { %>
+                            
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="row">
+                                    <div class="col">List of Problems</div>
+                                    <div class="col"></div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table rules=none class="table table-bordered problem-table">
+                                        <tr>
+                                            <th colspan="2" style="text-align: center;">Name</th>
+                                            <th> Solved?</th>
+                                        </tr>
+                                        <% if(sampleData.length> 0) { %>
+                                             <% for(let i=0; i<sampleData.length; i++) { %>
+                                                <tr>
+                                                    <td><%= sampleData[i].name %></td>
+                                                    <% if(sampleData[i].id==solve[i].id) { %>
+                                                        <td>Solved</td>
+                                                    <%> } else { %>
+                                                        <td>Unsolved</td>
+                                                    <% } %>    
+                                                </tr>
+                                            <% } %>
+                                        <% }
+                                         else { %>
+                                        <tr>
+                                            <td colspan="5">No problems Found</td>
+                                        </tr>
+                                        <% } %>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+            
+                        <% } %>
+            
+                    </div> 
                 </div>
-                <div class="col-lg-7" style="margin-left:10%">
-                    <div>
-                        <h2>Problems</h2>
-                    </div>
-                    <div class="problem-set">
-                        <table class="problem-table">
-                            <thead>
-                                <th>Name</th>
-                                <th></th>
-                                <th>Website</th>
-                                <th>Category</th>
-                                <th>Solved By</th>
-                            </thead>
-                            <tbody>
-                                <!-- <tr>
-                                    <td><a href="https://codeforces.com/problemset/problem/4/A">Watermelon</a></td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox1">Solved</label>
-                                        </div>
-                                    </td>
-                                    <td>Codeforces</td>
-                                    <td>Brute Force</td>
-                                </tr>
-                                <tr>
-                                    <td><a href="https://codeforces.com/problemset/problem/282/A">Bit++</a></td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox1">Solved</label>
-                                        </div>
-                                    </td>
-                                    <td>Codeforces</td>
-                                    <td>Implementation</td>
-                                </tr>
-                                <tr>
-                                    <td><a
-                                            href="https://www.hackerrank.com/challenges/array-left-rotation/problem?isFullScreen=true">Left-rotation</a>
-                                    </td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox1">Solved</label>
-                                        </div>
-                                    </td>
-                                    <td>Hackerrank</td>
-                                    <td>Data Stuctures</td>
-                                </tr>
-                                <tr>
-                                    <td><a
-                                            href="https://www.hackerrank.com/challenges/get-the-value-of-the-node-at-a-specific-position-from-the-tail/problem?isFullScreen=true">Get
-                                            Node Value</a>
-                                    </td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox1">Solved</label>
-                                        </div>
-                                    </td>      
-                                    <td>Hackerrank</td>
-                                    <td>Data Structures</td>
-                                </tr>
-                                <tr>
-                                    <td><a href="https://codeforces.com/problemset/problem/1728/E">Red-black Pepper</a></td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox1">Solved</label>
-                                        </div>
-                                    </td>
-                                    <td>Codeforces</td>
-                                    <td>Algorithms</td>
-                                </tr>
-                                <tr>
-                                    <td><a href="https://codeforces.com/problemset/problem/1729/G">Cut Substrings</a></td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox1">Solved</label>
-                                        </div>
-                                    </td>
-                                    <td>Codeforces</td>
-                                    <td>Dynamic Programming</td>
-                                </tr>
-                                <tr>
-                                    <td><a href="https://www.spoj.com/problems/ABCDEF/">ABCDEF</a></td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox1">Solved</label>
-                                        </div>
-                                    </td>
-                                    <td>SPOJ</td>
-                                    <td>Binary Search</td>
-                                </tr>
-                                <tr>
-                                    <td><a href="https://codeforces.com/problemset/problem/1729/F">Kirei and the Linear Function</a></td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox1">Solved</label>
-                                        </div>
-                                    </td>
-                                    <td>Codeforces</td>
-                                    <td>Hashing</td>
-                                </tr>
-                                <tr>
-                                    <td><a href="https://www.spoj.com/problems/ADABLOOM/">Ada and Bloom</a></td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox1">Solved</label>
-                                        </div>
-                                    </td>
-                                    <td>SPOJ</td>
-                                    <td>Graphs</td>
-                                </tr>
-                                <tr>
-                                    <td><a href="https://www.spoj.com/problems/ACRYM2/">Acronym II</a></td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox1">Solved</label>
-                                        </div>
-                                    </td>
-                                    <td>SPOJ</td>
-                                    <td>Strings</td>
-                                </tr>
-                                <tr>
-                                    <td><a href="https://codeforces.com/problemset/problem/1726/D">Graphs</a></td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox1">Solved</label>
-                                        </div>
-                                    </td>
-                                    <td>Codeforces</td>
-                                    <td>Graphs</td>
-                                </tr>
-                                <tr>
-                                    <td><a href="https://codeforces.com/problemset/problem/1726/D">Graphs</a></td>
-                                    <td>
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                                            <label class="form-check-label" for="inlineCheckbox1">Solved</label>
-                                        </div>
-                                    </td>
-                                    <td>Codeforces</td>
-                                    <td>Graphs</td>
-                                </tr> -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                
             </div>
-        </div>
-    </section>
-    <script src="category.js"></script>
-    <script src="sort.js"></script>
+            <script src="category.js"></script>
+            <script src="sort.js"></script>
+            <script src="solved.js"></script>
+            
+            
+
 <%- include("footer") -%>

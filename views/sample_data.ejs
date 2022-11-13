@@ -50,11 +50,11 @@
                   <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
                     aria-expanded="false">More</a>
                   <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="">About Us</a></li>
+                    <!-- <li><a class="dropdown-item" href="">About Us</a></li> -->
       
-                    <li><a class="dropdown-item" href="">FAQ</a></li>
+                    <li><a class="dropdown-item" href="/faq">FAQ</a></li>
       
-                    <li><a class="dropdown-item" href="">Contact</a></li>
+                    <!-- <li><a class="dropdown-item" href="">Contact</a></li> -->
       
                   </ul>
                 </li>
@@ -68,7 +68,7 @@
             <div class="row">
                 <div class="col-lg-3 prob-categories" style="height: 440px;">
                     <div style="background-color: #ddd; margin-top: 10px; border-radius: 5px;">
-                        <h3 style="text-align: center; margin:0;">Categories</h3>
+                        <h3 style="text-align: center; margin:0;">Search</h3>
                     </div>
                     <form action="" method="post">
                         <label
@@ -113,41 +113,38 @@
                                             <th>Category</th>
                                             <th>Solved by</th>
                                         </tr>
-                                        <% if(sampleData.length > 0)
-                                        {
-                                            for(let i=0; i<sampleData.length; i++){                                            
-                                        %>
-                                        <tr>
-                                            <td><a href="<%= sampleData[i].link %>"><%= sampleData[i].name %></a></td>
-                                            <td>
-                                                
-                                                <form action="/problems" method="POST">
-                                                    <input type="text" name="probid" readonly class="form-control-plaintext" value="<%= sampleData[i].id %>" style="display: none;">
-                                                    <button type="submit" class="btn btn-outline-dark btn-sm">Solve</button>
-                                                </form>
-                                                
-                                            </td>
-                                            <td><%= sampleData[i].website%></td>
-                                            <td><%= sampleData[i].category%></td>
-                                            
-                                        </tr>
-                                        <%
-                                            }
-                                        }
-                                        else
-                                        {
-                                        %>
-                                        <tr>
-                                            <td colspan="5">No problems Found</td>
-                                        </tr>
-                                        <%
-                                        }
-                                        %>
+                                        <% if(solve.length + unsolved.length > 0){ %>
+                                            <% for(let i=0; i<unsolved.length; i++){ %>
+                                                <tr>
+                                                    <td><a href="<%= unsolved[i].link %>"><%= unsolved[i].name %></a></td>
+                                                    <td>
+                                                        <form action="/problems" method="POST">
+                                                            <input type="text" name="probid" readonly class="form-control-plaintext" value="<%= unsolved[i].id %>" style="display: none;">
+                                                            <button type="submit" class="btn btn-outline-dark btn-sm">Solve</button>
+                                                        </form>
+                                                    </td>
+                                                    <td><%= unsolved[i].website %></td>
+                                                    <td><%= unsolved[i].category %></td>
+                                                    <td><%= usc[i].solveCount %></td>
+                                                </tr>
+                                            <% } for(let i=0; i<solve.length; i++){ %>
+                                                <tr>
+                                                    <td><a href="<%= solve[i].link %>"><%= solve[i].name %></a></td>
+                                                    <td><button class="btn btn-dark btn-sm" disabled>Solved</button></td>
+                                                    <td><%= solve[i].website %></td>
+                                                    <td><%= solve[i].category %></td>
+                                                    <td><%= ssc[i].solveCount %></td>
+                                                </tr>
+                                            <% } 
+                                        }else{ %>
+                                                <tr>
+                                                    <td colspan="5">No problems Found</td>
+                                                </tr>
+                                        <% } %>
                                     </table>
                                 </div>
                             </div>
                         </div>
-            
                         <% } %>
             
                     </div> 

@@ -21,6 +21,15 @@
         table {
             font-family: 'Montserrat', sans-serif;
         }
+        th{
+            text-align: center;
+        }
+        td {
+            text-align: center;
+        }
+        .top{
+            display: inline;
+        }
     </style>
 </head>
 <body>
@@ -49,11 +58,11 @@
                 <a class="nav-link dropdown-toggle" href="" role="button" data-bs-toggle="dropdown"
                   aria-expanded="false">More</a>
                 <ul class="dropdown-menu">
-                  <li><a class="dropdown-item" href="">About Us</a></li>
+                  <!-- <li><a class="dropdown-item" href="">About Us</a></li> -->
     
-                  <li><a class="dropdown-item" href="">FAQ</a></li>
+                  <li><a class="dropdown-item" href="/faq">FAQ</a></li>
     
-                  <li><a class="dropdown-item" href="">Contact</a></li>
+                  <!-- <li><a class="dropdown-item" href="">Contact</a></li> -->
     
                 </ul>
               </li>
@@ -71,7 +80,7 @@
             </div>
             <div class="card-body">
                 <div class="table-responsive" style="overflow:hidden;">
-                    <table rules=none class="table table-bordered problem-table">
+                    <table rules=none class="table table-bordered table-hover problem-table">
                         <tr>
                             <th>Rank</th>
                             <th>User</th>
@@ -80,9 +89,23 @@
                         <% if(user.length>0){ 
                             for(let i=0; i<user.length; i++){ %>
                                 <tr>
-                                    <td><%= i+1 %></td>
-                                    <td><%= user[i].name %></td>
-                                    <td><%= user[i].solved %></td>
+                                    <% if(i==0) { %>
+                                        <td><h3><i class="fa-solid fa-star"></i><div class="top"><%= i+1 %></div></h3></td>
+                                        <td><h3><%= user[i].name %></h3></td>
+                                        <td><h3><%= user[i].solved %></h3></td>
+                                    <% } else if(i==1) { %>
+                                        <td><h4><%= i+1 %></h4></td>
+                                        <td><h4><%= user[i].name %></h4></td>
+                                        <td><h4><%= user[i].solved %></h4></td>
+                                    <% } else if(i==2) { %>
+                                        <td><h6><%= i+1 %></h6></td>
+                                        <td><h6><%= user[i].name %></h6></td>
+                                        <td><h6><%= user[i].solved %></h6></td>
+                                    <% } else { %>
+                                        <td><%= i+1 %></td>
+                                        <td><%= user[i].name %></td>
+                                        <td><%= user[i].solved %></td>
+                                    <% } %>
                                 </tr>
                             <% }
                         } else { %>
