@@ -4,7 +4,7 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs')
 const path = require('path');
-const e = require('express');
+const https = require('https')
 
 const app = express()
 
@@ -238,7 +238,7 @@ app.get('/add', (req, res)=>{
 app.post('/add', (req, res)=>{
 	const {name, link, website, category} = req.body;
 	if (name && link && website && category) {
-		connection.query('SELECT name from problems WHERE name = ?', [name], async (err, results) => {
+		connection.query('SELECT link from problems WHERE link = ?', [link], async (err, results) => {
 				if (err) {
 					console.log(err);
 				}
@@ -246,20 +246,6 @@ app.post('/add', (req, res)=>{
 						res.render('add', {data:{profileName: req.session.name, prob: "empty"}})
 					
 				else {
-					// connection.query('INSERT INTO problems SET ?', { name: name, link: link, website: website, category: category }, (err, results) => {
-					// 	if (err) {
-					// 		console.log(err);
-					// 	} else {
-					// 		res.send('Problem Added');
-					// 		res.end();
-					// 	}
-					// })
-					// let probCount = 0
-					// connection.query('SELECT COUNT(probid) as probcount FROM problems', (err, probs)=>{
-					// 	if(err) throw err;
-					// 	console.log(probs);
-					// 	probCount = probs.probcount
-					// })
 					connection.beginTransaction((err)=>{
 						if(err) throw err
 						connection.query('INSERT INTO problems SET ?', {name: name, link: link, website: website, category: category}, function (error, results, fields) {
@@ -297,7 +283,7 @@ app.post('/add', (req, res)=>{
 app.get('/progress', (req, res)=>{
 	const { id } = req.body
 	let profile = req.session.name
-	let cat = ["Algorithms", "Data Structures", "Brute Force", "Mathematics", "Graphs", "Hashing", "Dynamic Programming", "Strings", "Binary Search", "Probabilities"]
+	let cat = ["Algorithms", "Data Structures", "Brute Force", "Mathematics", "Graphs", "Hashing", "Dynamic Programming", "Sorting", "Recursion", "Number Theory"]
 	let count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 	let userid = req.session.userid
 	for(let i=0; i<10;i++)
