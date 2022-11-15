@@ -144,12 +144,12 @@ app.get('/problems', (req, res)=>{
 		let solved = []
 		for(let i=0; i<solvedID.length; i++) solved.push(solvedID[i].problemID)
 		
-		var sql = `SELECT * FROM problems WHERE id IN ('${solved.join("','")}') ORDER BY id ASC`
+		var sql = `SELECT * FROM problems WHERE id IN ('${solved.join("','")}') ORDER BY id DESC`
 		connection.query(sql, (err, solve)=>{
-			var sql1 = `SELECT * FROM problems WHERE id NOT IN ('${solved.join("','")}') ORDER BY id ASC`
+			var sql1 = `SELECT * FROM problems WHERE id NOT IN ('${solved.join("','")}') ORDER BY id DESC`
 			connection.query(sql1, (err, unsolved)=>{
-				connection.query(`SELECT * FROM solvedby WHERE problemID IN ('${solved.join("','")}') `, (err, ssc)=>{
-					connection.query(`SELECT * FROM solvedby WHERE problemID NOT IN ('${solved.join("','")}') `, (err, usc)=>{
+				connection.query(`SELECT * FROM solvedby WHERE problemID IN ('${solved.join("','")}') ORDER BY problemID DESC`, (err, ssc)=>{
+					connection.query(`SELECT * FROM solvedby WHERE problemID NOT IN ('${solved.join("','")}') ORDER BY problemID DESC`, (err, usc)=>{
 						let profile = req.session.name
 						res.render('sample_data', { title : 'Problems', action: 'List', solve: solve, unsolved: unsolved, ssc: ssc, usc: usc, profileName: profile})
 					})
@@ -238,13 +238,14 @@ app.get('/add', (req, res)=>{
 app.post('/add', (req, res)=>{
 	const {name, link, website, category} = req.body;
 	if (name && link && website && category) {
-		connection.query('SELECT link from problems WHERE link = ?', [link], async (err, results) => {
+		connection.query('SELECT link, name from problems WHERE link = ? OR name = ?', [link, name], async (err, results) => {
 				if (err) {
 					console.log(err);
 				}
-				else if (results.length > 0) 
-						res.render('add', {data:{profileName: req.session.name, prob: "empty"}})
-					
+				else if (results.length > 0){
+					console.log(results);
+					res.render('add', {data:{profileName: req.session.name, prob: "empty"}})
+				}
 				else {
 					connection.beginTransaction((err)=>{
 						if(err) throw err
@@ -267,6 +268,7 @@ app.post('/add', (req, res)=>{
 										});
 									}
 									console.log('success!');
+									res.redirect('/problems')
 								});
 							})
 						})
