@@ -66,7 +66,7 @@
             
             
             <div class="row">
-                <div class="col-lg-3 prob-categories" style="height: 440px;">
+                <div class="col-lg-3 prob-categories" style="height: 600px;">
                     <div style="background-color: #ddd; margin-top: 10px; border-radius: 5px;">
                         <h3 style="text-align: center; margin:0;">Search</h3>
                     </div>
@@ -82,10 +82,20 @@
                         <!-- <button style="margin: 10% 40%" class="btn btn-outline-dark btn-lg dw-btn" type="submit">Go</button> -->
                         <label
                             style="margin: 30px 0; color: #000; font-family: 'Montserrat', sans-serif; font-size: 1.5rem; color: #fff; display: block; text-align: center;"
-                            for="tagsInput">Select Website</label>
+                            for="tagsInput">Select Website
+                        </label>
                         <div class="search-box" style="margin-top: 50px">
                             <button class="btn-search"><i class="fas fa-search"></i></button>
                             <input type="text" onkeyup="sortBySite()" class="input-search" id="site"
+                                placeholder="Type to Search...">
+                        </div>
+                        <label
+                            style="margin: 30px 0; color: #000; font-family: 'Montserrat', sans-serif; font-size: 1.5rem; color: #fff; display: block; text-align: center;"
+                            for="tagsInput">Select Difficulty
+                        </label>
+                        <div class="search-box" style="margin-top: 50px">
+                            <button class="btn-search"><i class="fas fa-search"></i></button>
+                            <input type="text" onkeyup="sortByDiff()" class="input-search" id="diff"
                                 placeholder="Type to Search...">
                         </div>
                     </form>
@@ -111,6 +121,7 @@
                                             <!-- <th></th> -->
                                             <th>Website</th>
                                             <th>Category</th>
+                                            <th>Difficulty</th>
                                             <th>Solved by</th>
                                         </tr>
                                         <% if(solve.length + unsolved.length > 0){ %>
@@ -125,6 +136,7 @@
                                                     </td>
                                                     <td><%= unsolved[i].website %></td>
                                                     <td><%= unsolved[i].category %></td>
+                                                    <td><%= unsolved[i].Difficulty %></td>
                                                     <td><%= usc[i].solveCount %></td>
                                                 </tr>
                                             <% } for(let i=0; i<solve.length; i++){ %>
@@ -133,6 +145,7 @@
                                                     <td><button class="btn btn-dark btn-sm" disabled>Solved</button></td>
                                                     <td><%= solve[i].website %></td>
                                                     <td><%= solve[i].category %></td>
+                                                    <td><%= solve[i].Difficulty %></td>
                                                     <td><%= ssc[i].solveCount %></td>
                                                 </tr>
                                             <% } 

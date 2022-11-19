@@ -6,6 +6,7 @@ const bcrypt = require('bcryptjs')
 const path = require('path');
 const https = require('https')
 
+
 const app = express()
 
 
@@ -160,16 +161,32 @@ app.get('/problems', (req, res)=>{
 })
 
 
-// app.get('/test', (req, res)=>{
-// 	connection.query("SELECT * FROM problems", function(err, result1) {
-// 		connection.query("SELECT * FROM solvedby", function(err, result2) {
-// 			connection.query("SELECT problemID FROM solve WHERE userID=?", [req.session.userid], (err, result3)=>{
-// 				console.log(result3);
-// 				res.render('test', { title : 'Problems', action: 'List', problems: result1, solved : result2, s: result3 })
-// 			})
-// 			;
-// 		});
-// 	  });
+// app.post('/test', async (req, res)=>{
+// 	const {link} = req.body
+// 	const ci = link.slice(-6)
+// 	const index = ci.slice(-1)
+// 	const contest = ci.substring(0, 4)
+// 	// console.log(index);
+// 	// console.log(contest);
+// 	url = "https://codeforces.com/api/problemset.problems"
+// 	https.get(url, (response)=>{
+// 		let body = ''
+// 		response.on('data', (data)=>{
+// 			body += data
+// 		})
+// 		response.on('end', ()=>{
+// 			const problems = JSON.parse(body)
+// 			// console.log(contest);
+// 			for(let i=0; i<problems.result.problems.length; i++)
+// 			{
+// 				if(problems.result.problems[i].contestId==contest && problems.result.problems[i].index==index)
+// 				{
+// 					console.log(problems.result.problems[i].name);
+// 					break
+// 				}
+// 			}
+// 		})
+// 	})
 // })
 
 app.get('/leaderboards', (req, res)=>{
@@ -236,9 +253,20 @@ app.get('/add', (req, res)=>{
 })
 
 app.post('/add', (req, res)=>{
-	const {name, link, website, category} = req.body;
-	if (name && link && website && category) {
-		connection.query('SELECT link, name from problems WHERE link = ? OR name = ?', [link, name], async (err, results) => {
+	const {link} = req.body;
+	const ci = link.slice(-6)
+	const index = ci.slice(-1)
+	const contest = ci.substring(0, 4)
+	let website = ''
+	let name = ''
+	let category = ''
+	let difficulty = ''
+	if (link) {
+		if(link.includes('codeforces')) website = 'Codeforces'
+		else if(link.includes('hackerrank')) website = 'Hackerrank'
+		else if(link.includes('topcoder')) website = 'Topcoder'
+		else if(link.includes('codechef')) website = 'Codechef'
+		connection.query('SELECT link from problems WHERE link = ?', [link], async (err, results) => {
 				if (err) {
 					console.log(err);
 				}
@@ -247,34 +275,63 @@ app.post('/add', (req, res)=>{
 					res.render('add', {data:{profileName: req.session.name, prob: "empty"}})
 				}
 				else {
-					connection.beginTransaction((err)=>{
-						if(err) throw err
-						connection.query('INSERT INTO problems SET ?', {name: name, link: link, website: website, category: category}, function (error, results, fields) {
-							if (error) {
-							  return connection.rollback(function() {
-								throw error;
-							  });
-							}
-							connection.query('INSERT INTO solvedby SET solveCount=0', (err)=>{
-								if (error) {
-									return connection.rollback(function() {
-									  throw error;
-									});
+					url = "https://codeforces.com/api/problemset.problems"
+					https.get(url, (response)=>{
+						let body = ''
+						response.on('data', (data)=>{
+							body += data
+						})
+						response.on('end', ()=>{
+							const problems = JSON.parse(body)
+							probs = problems.result.problems
+							// console.log(contest);
+							for(let i=0; i<probs.length; i++)
+							{
+								if(probs[i].contestId==contest && probs[i].index==index)
+								{
+									name = probs[i].name
+									category = probs[i].tags[1]
+									console.log(category);
+									if(probs[i].rating>=800 && probs[i].rating<1000) difficulty = 'Newbie'
+									else if(probs[i].rating>=1000 && probs[i].rating<1200) difficulty = 'Novice'
+									else if(probs[i].rating>=1200 && probs[i].rating<1400) difficulty = 'Apprentice'
+									else if(probs[i].rating>=1400 && probs[i].rating<1600) difficulty = 'Specialist'
+									else if(probs[i].rating>=1600 && probs[i].rating<1800) difficulty = 'Expert'
+									else if(probs[i].rating>1800) difficulty = 'Master'
+									// console.log(problems.result.problems[i].name);
+									break
 								}
-								connection.commit(function(err) {
-									if (err) {
-										return connection.rollback(function() {
-										throw err;
-										});
+							}
+							connection.beginTransaction((err)=>{
+								if(err) throw err
+								connection.query('INSERT INTO problems SET ?', {name: name, link: link, website: website, category: category, Difficulty: difficulty}, function (error, results, fields) {
+									if (error) {
+									  return connection.rollback(function() {
+										throw error;
+									  });
 									}
-									console.log('success!');
-									res.redirect('/problems')
-								});
+									connection.query('INSERT INTO solvedby SET solveCount=0', (err)=>{
+										if (error) {
+											return connection.rollback(function() {
+											  throw error;
+											});
+										}
+										connection.commit(function(err) {
+											if (err) {
+													return connection.rollback(function() {
+													throw err;
+												});
+											}
+											console.log('success!');
+											res.redirect('/problems')
+										});
+									})
+								})
 							})
 						})
 					})
-					}
 				}
+			}
 		)
 	}
 	else{
@@ -316,7 +373,7 @@ app.get('/profile/:id', function(request, response) {
 	const { id } = request.params
 	// console.log(request.session.name);
 	// console.log(request.session.email);
-	let name, email, bio
+	let name, email, bio, solved, rank
 	name = request.session.name
 	email = request.session.email
 	bio = request.session.bio
@@ -326,12 +383,19 @@ app.get('/profile/:id', function(request, response) {
 			} 
 			else {
 				if (results.length > 0) {
-					console.log(results)
+					// console.log(results)
+					solved = results[0].solved
+					if(solved>=10 && solved <20) rank = 'Newbie'
+					else if(solved>=20 && solved <50) rank = 'Novice'
+					else if(solved>=20 && solved <50) rank = 'Apprentice'
+					else if(solved>=50 && solved <100) rank = 'Specialist'
+					else if(solved>=100 && solved <150) rank = 'Expert'
+					else if(solved>=150 && solved <200) rank = 'Master'
 				}
 				if (request.session.loggedin) {
-					console.log('bio', bio);
-					console.log(results);
-					response.render('profile', {data:{ name: name, email: email, bio: bio, solved: results[0] }} );
+					// console.log('bio', bio);
+					// console.log(results);
+					response.render('profile', {data:{ name: name, email: email, bio: bio, solved: solved, rank: rank }} );
 				} else {
 					// Not logged in
 					response.redirect('/login');

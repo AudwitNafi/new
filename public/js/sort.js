@@ -62,3 +62,23 @@ function sort() {
             }       
         }
  }
+
+ function sortByDiff()
+ {
+    var input, filter, table, tr, td, i, txtValue;
+        input = document.querySelector("#diff");
+        filter = input.value.toUpperCase();
+        table = document.querySelector(".problem-table");
+        tr = table.getElementsByTagName("tr");
+        for (i = 1; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[4];
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+            }       
+        }
+ }
