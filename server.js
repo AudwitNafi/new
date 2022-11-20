@@ -254,16 +254,29 @@ app.get('/add', (req, res)=>{
 
 app.post('/add', (req, res)=>{
 	const {link} = req.body;
-	const ci = link.slice(-6)
-	const index = ci.slice(-1)
-	const contest = ci.substring(0, 4)
+	// const ci = link.slice(-6)
+	// const index = ci.slice(-1)
+	// const contest = ci.substring(0, 4)
+	let contest = ''
+	let ci = ''
+	let index = ''
+	let pid = ''
 	let website = ''
 	let name = ''
 	let category = ''
 	let difficulty = ''
 	if (link) {
-		if(link.includes('codeforces')) website = 'Codeforces'
-		else if(link.includes('hackerrank')) website = 'Hackerrank'
+		if(link.includes('codeforces')){
+			website = 'Codeforces'
+			ci = link.slice(-6)
+			index = ci.slice(-1)
+			contest = ci.substring(0, 4)
+		} 
+		else if(link.includes('onlinejudge')){
+			website = 'UVA Online Judge'
+			category = 'data structures'
+			pid = link.slice(-2)
+		}
 		else if(link.includes('topcoder')) website = 'Topcoder'
 		else if(link.includes('codechef')) website = 'Codechef'
 		connection.query('SELECT link from problems WHERE link = ?', [link], async (err, results) => {
@@ -275,8 +288,10 @@ app.post('/add', (req, res)=>{
 					res.render('add', {data:{profileName: req.session.name, prob: "empty"}})
 				}
 				else {
-					url = "https://codeforces.com/api/problemset.problems"
-					https.get(url, (response)=>{
+					if(website == 'Codeforces')
+					{
+						url = "https://codeforces.com/api/problemset.problems"
+						https.get(url, (response)=>{
 						let body = ''
 						response.on('data', (data)=>{
 							body += data
@@ -330,9 +345,55 @@ app.post('/add', (req, res)=>{
 							})
 						})
 					})
+					}
+					else if(website == 'UVA Online Judge'){
+						url = 'https://uhunt.onlinejudge.org/api/p/id/' + pid
+						https.get(url, (response)=>{
+							let body = ''
+							response.on('data', (data)=>{
+								body += data
+							})
+							response.on('end', ()=>{
+								const problem = JSON.parse(body)
+								name = problem.title
+								if(problem.dacu<2000) difficulty = 'Master'
+								else if(problem.dacu>=2000 && problem.dacu<5000) difficulty = 'Expert'
+								else if(problem.dacu>=5000 && problem.dacu<10000) difficulty = 'Specialist'
+								else if(problem.dacu>=10000 && problem.dacu<20000) difficulty = 'Apprentice'
+								else if(problem.dacu>=20000 && problem.dacu<50000) difficulty = 'Novice'
+								else if(problem.dacu>=50000) difficulty = 'Newbie'
+								connection.beginTransaction((err)=>{
+									if(err) throw err
+									connection.query('INSERT INTO problems SET ?', {name: name, link: link, website: website, category: category, Difficulty: difficulty}, function (error, results, fields) {
+										if (error) {
+										  return connection.rollback(function() {
+											throw error;
+										  });
+										}
+										connection.query('INSERT INTO solvedby SET solveCount=0', (err)=>{
+											if (error) {
+												return connection.rollback(function() {
+												  throw error;
+												});
+											}
+											connection.commit(function(err) {
+												if (err) {
+														return connection.rollback(function() {
+														throw err;
+													});
+												}
+												console.log('success!');
+												res.redirect('/problems')
+											});
+										})
+									})
+								})
+							})
+						})
+					
 				}
 			}
-		)
+		})
 	}
 	else{
 		res.render('add', {data:{profileName: req.session.name, prob: "details"}})
