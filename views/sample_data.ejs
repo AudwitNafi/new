@@ -131,6 +131,8 @@
                                                     <td>
                                                         <form action="/problems" method="POST">
                                                             <input type="text" name="probid" readonly class="form-control-plaintext" value="<%= unsolved[i].id %>" style="display: none;">
+                                                            <input type="text" name="probname" readonly class="form-control-plaintext" value="<%= unsolved[i].name %>" style="display: none;">
+                                                            <input type="text" name="website" readonly class="form-control-plaintext" value="<%= unsolved[i].website %>" style="display: none;">
                                                             <button type="submit" class="btn btn-outline-dark btn-sm">Solve</button>
                                                         </form>
                                                     </td>

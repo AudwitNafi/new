@@ -4,7 +4,9 @@ const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs')
 const path = require('path');
-const https = require('https')
+const https = require('https');
+const { response } = require('express');
+const { json } = require('body-parser');
 
 
 const app = express()
@@ -70,6 +72,8 @@ app.post('/auth', async function(request, response) {
 				request.session.email = email;
 				request.session.bio = results[0].bio;
 				request.session.userid = results[0].ID;
+				request.session.cfHandle = results[0].cfHandle;
+				request.session.uvaHandle = results[0].uvaHandle;
 				// console.log(request.session.userid);
 				response.redirect('/home')
 			} else {
@@ -86,8 +90,8 @@ app.post('/auth', async function(request, response) {
 
 app.post('/reg', async (req, res)=>{
 	console.log(req.body);
-	const {name, bio, email, password, passwordConfirm} = req.body;
-	if (name && email && password && passwordConfirm) {
+	const {name, cfHandle, uvaHandle, bio, email, password, passwordConfirm} = req.body;
+	if (name && cfHandle && uvaHandle && email && password && passwordConfirm) {
 		connection.query('SELECT email from users WHERE email = ?', [email], async (err, results) => {
 				if (err) {
 					console.log(err);
@@ -105,16 +109,34 @@ app.post('/reg', async (req, res)=>{
 					else {
 						let hashedPassword = await bcrypt.hash(password, 8);
 							console.log(hashedPassword);
-
-						connection.query('INSERT INTO users SET ?', { name: name, bio:bio, email: email, password: hashedPassword }, (err, results) => {
-							if (err) {
-								console.log(err);
-							} else {
-								// res.send('User registered');
-								res.render('login', {prob:"success"})
-								res.end();
-							}
+						url = 'https://uhunt.onlinejudge.org/api/uname2uid/'+ uvaHandle;
+						https.get(url, (response)=>{
+							let body = ''
+							response.on('data', (data)=>{
+								body += data
+							response.on('end', ()=>{
+								const uvaID = JSON.parse(body)
+								connection.query('INSERT INTO users SET ?', { name: name, cfHandle: cfHandle, uvaHandle: uvaID, bio:bio, email: email, password: hashedPassword }, (err, results) => {
+									if (err) {
+										console.log(err);
+									} else {
+										// res.send('User registered');
+										res.render('login', {prob:"success"})
+										res.end();
+									}
+								})
+							})
 						})
+						})
+						// connection.query('INSERT INTO users SET ?', { name: name, cfHandle: cfHandle, uvaHandle: uvaHandle, bio:bio, email: email, password: hashedPassword }, (err, results) => {
+						// 	if (err) {
+						// 		console.log(err);
+						// 	} else {
+						// 		// res.send('User registered');
+						// 		res.render('login', {prob:"success"})
+						// 		res.end();
+						// 	}
+						// })
 					}
 				}
 			}
@@ -211,41 +233,161 @@ app.get('/leaderboards', (req, res)=>{
 
 app.post("/problems", (req, res)=>{
 	const probid = req.body.probid;
-	console.log(probid);
-	connection.beginTransaction(function(err) {
-		if (err) { throw err; }
-		console.log(probid);
-		connection.query('INSERT INTO solve SET ?', {userID: req.session.userid, problemID: probid}, function (error, results, fields) {
-		  if (error) {
-			return connection.rollback(function() {
-			  throw error;
-			});
-		  }
-		  connection.query('UPDATE users SET solved=solved+1 WHERE id=?', req.session.userid, function (error, results, fields) {
-			if (error) {
-			  return connection.rollback(function() {
-				throw error;
-			  });
-			}
-			connection.query('UPDATE solvedby SET solveCount=solveCount+1 WHERE problemID=?', [probid], function (error, results, fields) {
-				if (error) {
-				  return connection.rollback(function() {
-					throw error;
-				  });
-				}
-				connection.commit(function(err) {
-					if (err) {
-						return connection.rollback(function() {
-						throw err;
+	const probname = req.body.probname;
+	const website = req.body.website;
+	// console.log(probid);
+	if(website == 'Codeforces')
+	{
+		let flag = false
+		url = 'https://codeforces.com/api/user.status?handle=' + req.session.cfHandle
+		https.get(url, (response)=>{
+			let body = ''
+			response.on('data', (data)=>{
+				body += data
+			})
+			response.on('end', ()=>{
+				const subs = JSON.parse(body)
+				submissions = subs.result
+				// console.log(submissions[0]);
+				for(let i=0; i<submissions.length; i++)
+				{
+					if(submissions[i].problem.name==probname && submissions[i].verdict=='OK'){
+						connection.beginTransaction(function(err) {
+							if (err) { throw err; }
+							console.log(probid);
+							connection.query('INSERT INTO solve SET ?', {userID: req.session.userid, problemID: probid}, function (error, results, fields) {
+							if (error) {
+								return connection.rollback(function() {
+								throw error;
+								});
+							}
+							connection.query('UPDATE users SET solved=solved+1 WHERE id=?', req.session.userid, function (error, results, fields) {
+								if (error) {
+								return connection.rollback(function() {
+									throw error;
+								});
+								}
+								connection.query('UPDATE solvedby SET solveCount=solveCount+1 WHERE problemID=?', [probid], function (error, results, fields) {
+									if (error) {
+									return connection.rollback(function() {
+										throw error;
+									});
+									}
+									connection.commit(function(err) {
+										if (err) {
+											return connection.rollback(function() {
+											throw err;
+											});
+										}
+										console.log('success!');
+									});
+								});
+							});
+							res.redirect('/problems')
 						});
+						})
 					}
-					console.log('success!');
-				});
-		  	});
-		});
+				}
+				
+				// res.redirect('/problems')
+			})
+		})
 		res.redirect('/problems')
-	  });
-	})
+		
+		
+	}
+	else if(website == 'UVA Online Judge')
+	{
+		url = 'https://uhunt.onlinejudge.org/api/subs-user/'+ req.session.uvaHandle;
+		https.get(url, (response)=>{
+			let body = ''
+			response.on('data', (data)=>{
+				body += data
+			})
+			response.on('end', ()=>{
+				const subs = JSON.parse(body)
+				submissions = subs.subs
+				for(let i=0; i<submissions.length; i++)
+				{
+					if(submissions[i][1]==probid && submissions[i][2]==90)
+					{
+						// console.log(submissions[i]);
+						connection.beginTransaction(function(err) {
+							if (err) { throw err; }
+							console.log(probid);
+							connection.query('INSERT INTO solve SET ?', {userID: req.session.userid, problemID: probid}, function (error, results, fields) {
+							if (error) {
+								return connection.rollback(function() {
+								throw error;
+								});
+							}
+							connection.query('UPDATE users SET solved=solved+1 WHERE id=?', req.session.userid, function (error, results, fields) {
+								if (error) {
+								return connection.rollback(function() {
+									throw error;
+								});
+								}
+								connection.query('UPDATE solvedby SET solveCount=solveCount+1 WHERE problemID=?', [probid], function (error, results, fields) {
+									if (error) {
+									return connection.rollback(function() {
+										throw error;
+									});
+									}
+									connection.commit(function(err) {
+										if (err) {
+											return connection.rollback(function() {
+											throw err;
+											});
+										}
+										console.log('success!');
+									});
+								});
+							});
+							res.redirect('/problems')
+						});
+						})
+					}
+				}
+
+			})
+		})
+		// res.redirect('/problems')
+	}
+	
+	// connection.beginTransaction(function(err) {
+	// 	if (err) { throw err; }
+	// 	console.log(probid);
+	// 	connection.query('INSERT INTO solve SET ?', {userID: req.session.userid, problemID: probid}, function (error, results, fields) {
+	// 	  if (error) {
+	// 		return connection.rollback(function() {
+	// 		  throw error;
+	// 		});
+	// 	  }
+	// 	  connection.query('UPDATE users SET solved=solved+1 WHERE id=?', req.session.userid, function (error, results, fields) {
+	// 		if (error) {
+	// 		  return connection.rollback(function() {
+	// 			throw error;
+	// 		  });
+	// 		}
+	// 		connection.query('UPDATE solvedby SET solveCount=solveCount+1 WHERE problemID=?', [probid], function (error, results, fields) {
+	// 			if (error) {
+	// 			  return connection.rollback(function() {
+	// 				throw error;
+	// 			  });
+	// 			}
+	// 			connection.commit(function(err) {
+	// 				if (err) {
+	// 					return connection.rollback(function() {
+	// 					throw err;
+	// 					});
+	// 				}
+	// 				console.log('success!');
+	// 			});
+	// 	  	});
+	// 	});
+	// 	res.redirect('/problems')
+	//   });
+	// })
 })
 
 app.get('/add', (req, res)=>{
@@ -260,7 +402,9 @@ app.post('/add', (req, res)=>{
 	let contest = ''
 	let ci = ''
 	let index = ''
+	let id
 	let pid = ''
+	let ac = ''
 	let website = ''
 	let name = ''
 	let category = ''
@@ -274,10 +418,51 @@ app.post('/add', (req, res)=>{
 		} 
 		else if(link.includes('onlinejudge')){
 			website = 'UVA Online Judge'
-			category = 'data structures'
-			pid = link.slice(-2)
+			let rand = Math.floor(Math.random() * 10);
+			switch(rand) {
+				case 0:
+					category = 'data structures'
+					break
+				case 1:
+					category = 'algorithms'
+					break
+				case 2:
+					category = 'recursion'
+					break
+				case 3:
+					category = 'dp'
+					break
+				case 4:
+					category = 'greedy'
+					break
+				case 5:
+					category = 'brute force'
+					break
+				case 6:
+					category = 'math'
+					break
+				case 7:
+					category = 'graphs'
+					break
+				case 8:
+					category = 'number theory'
+					break
+				case 9:
+					category = 'sortings'
+					break
+			}
+			
+			pid = link.slice(-3)
 		}
-		else if(link.includes('topcoder')) website = 'Topcoder'
+		else if(link.includes('atcoder.jp'))
+		{
+			website = 'Atcoder'
+			ac = link.slice(-8)
+			ai = ac.slice(-1)
+			act = ac.substring(0,6)
+			console.log(ai);
+			console.log(act);
+		} 
 		else if(link.includes('codechef')) website = 'Codechef'
 		connection.query('SELECT link from problems WHERE link = ?', [link], async (err, results) => {
 				if (err) {
@@ -299,7 +484,8 @@ app.post('/add', (req, res)=>{
 						response.on('end', ()=>{
 							const problems = JSON.parse(body)
 							probs = problems.result.problems
-							// console.log(contest);
+							id = contest + index
+							console.log(id);
 							for(let i=0; i<probs.length; i++)
 							{
 								if(probs[i].contestId==contest && probs[i].index==index)
@@ -319,13 +505,13 @@ app.post('/add', (req, res)=>{
 							}
 							connection.beginTransaction((err)=>{
 								if(err) throw err
-								connection.query('INSERT INTO problems SET ?', {name: name, link: link, website: website, category: category, Difficulty: difficulty}, function (error, results, fields) {
+								connection.query('INSERT INTO problems SET ?', {id: id, name: name, link: link, website: website, category: category, Difficulty: difficulty}, function (error, results, fields) {
 									if (error) {
 									  return connection.rollback(function() {
 										throw error;
 									  });
 									}
-									connection.query('INSERT INTO solvedby SET solveCount=0', (err)=>{
+									connection.query('INSERT INTO solvedby VALUES (?, 0)', id, (err)=>{
 										if (error) {
 											return connection.rollback(function() {
 											  throw error;
@@ -348,6 +534,7 @@ app.post('/add', (req, res)=>{
 					}
 					else if(website == 'UVA Online Judge'){
 						url = 'https://uhunt.onlinejudge.org/api/p/id/' + pid
+						console.log(url);
 						https.get(url, (response)=>{
 							let body = ''
 							response.on('data', (data)=>{
@@ -364,13 +551,13 @@ app.post('/add', (req, res)=>{
 								else if(problem.dacu>=50000) difficulty = 'Newbie'
 								connection.beginTransaction((err)=>{
 									if(err) throw err
-									connection.query('INSERT INTO problems SET ?', {name: name, link: link, website: website, category: category, Difficulty: difficulty}, function (error, results, fields) {
+									connection.query('INSERT INTO problems SET ?', {id: pid, name: name, link: link, website: website, category: category, Difficulty: difficulty}, function (error, results, fields) {
 										if (error) {
 										  return connection.rollback(function() {
 											throw error;
 										  });
 										}
-										connection.query('INSERT INTO solvedby SET solveCount=0', (err)=>{
+										connection.query('INSERT INTO solvedby VALUES (?, 0)', pid, (err)=>{
 											if (error) {
 												return connection.rollback(function() {
 												  throw error;
@@ -391,7 +578,34 @@ app.post('/add', (req, res)=>{
 							})
 						})
 					
-				}
+					}
+					else if(website == 'Atcoder')
+					{
+						url = 'https://kenkoooo.com/atcoder/resources/merged-problems.json'
+						https.get(url, (response)=>{
+							let body = ''
+							response.on('data', (data)=>{
+								body += data
+							})
+							response.on('end', ()=>{
+								const problems = JSON.parse(body)
+								console.log(problems);
+								// for(let i=0; i<problems.length; i++)
+								// {
+								// 	if(problems[i].contest_id==act && problems[i].problem_index== ai)
+								// 	{
+								// 		name = problems[i].name
+								// 		if(ai =='a') difficulty = 'Newbie'
+								// 		else if(ai == 'b') difficulty = 'Novice'
+								// 		else if(ai == 'c') difficulty = 'Apprentice'
+								// 		else if(ai == 'd') difficulty = 'Specialist'
+								// 		else if(ai == 'e') difficulty = 'Expert'
+								// 		else difficulty = 'Master'
+								// 	}
+								// }
+							})
+						})
+					}
 			}
 		})
 	}
@@ -403,7 +617,7 @@ app.post('/add', (req, res)=>{
 app.get('/progress', (req, res)=>{
 	const { id } = req.body
 	let profile = req.session.name
-	let cat = ["Algorithms", "Data Structures", "Brute Force", "Mathematics", "Graphs", "Hashing", "Dynamic Programming", "Sorting", "Recursion", "Number Theory"]
+	let cat = ["algorithms", "data structures", "brute Force", "math", "graphs", "greedy", "dp", "sortings", "recursion", "number theory"]
 	let count = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 	let userid = req.session.userid
 	for(let i=0; i<10;i++)
@@ -434,11 +648,22 @@ app.get('/profile/:id', function(request, response) {
 	const { id } = request.params
 	// console.log(request.session.name);
 	// console.log(request.session.email);
-	let name, email, bio, solved, rank
+	let name, email, bio, solved, rank, cfRating, cfRank
 	name = request.session.name
 	email = request.session.email
 	bio = request.session.bio
-	connection.query('SELECT solved FROM users WHERE id = ?', [id], async(err, results)=>{
+	
+	url = 'https://codeforces.com/api/user.info?handles=' + request.session.cfHandle
+	https.get(url, (res)=>{
+		let body = ''
+		res.on('data', (data)=>{
+			body += data
+		})
+		res.on('end', ()=>{
+			const uinfo = JSON.parse(body)
+			cfRating = uinfo.result[0].rating
+			cfRank = uinfo.result[0].rank
+			connection.query('SELECT solved FROM users WHERE id = ?', [id], async(err, results)=>{
 			if (err) {
 				console.log(err);
 			} 
@@ -456,7 +681,7 @@ app.get('/profile/:id', function(request, response) {
 				if (request.session.loggedin) {
 					// console.log('bio', bio);
 					// console.log(results);
-					response.render('profile', {data:{ name: name, email: email, bio: bio, solved: solved, rank: rank }} );
+					response.render('profile', {data:{ name: name, email: email, bio: bio, solved: solved, rank: rank, cfRating: cfRating, cfRank: cfRank }} );
 				} else {
 					// Not logged in
 					response.redirect('/login');
@@ -465,6 +690,8 @@ app.get('/profile/:id', function(request, response) {
 				
 			}
 		})
+		})
+	})
 	}
 );
 
